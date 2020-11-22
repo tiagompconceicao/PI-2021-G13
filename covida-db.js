@@ -66,13 +66,11 @@ module.exports = {
             //cb(error)
         }
 
-        let colors = ['red', 'green', 'blue'];
         for (const game of group.games){
             if(game.name.equals(name)){
                 //cb(answer(game))
             }
         }
-
         //cb(error)
     }
 }
