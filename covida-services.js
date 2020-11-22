@@ -14,31 +14,63 @@ sendo estes valores parametrizáveis no pedido. Os jogos vêm ordenadas por orde
 const tasksDb = require ("./covida-db")
 
 module.exports = {
-    getAllTasks: getAllTasks,
-    getTask: this.getTask,
-    createTask: createTask,
-    deleteTask: deleteTask,
-    uptadeTask: uptadeTask
-}
+    getPopularGames: function (cb){
+        //Obter a lista dos jogos mais populares
 
+        data.getPopularGames()
+    },
+    getGameByName: function (name, cb){
+        //Pesquisar jogos pelo nome
 
-// getAllTasks tem que ser assincrona. por isso leva um callback
-function getAllTasks (cb ) {
-    tasksDb 
-}
+        data.getGameByName(name)
+    },
+    createGroup: function (groupName, description, cb){
+        //Criar grupo atribuindo-lhe um nome e descrição
 
-function getTask (idTask, cb ) {
+        //todo verificar seo nome e a descricao estao vazios, se sim da erro
+        db.createGroup(groupName, description)
+    },
+    editGroup: function (groupName, newGroupName, newDescription, cb){
+        //Editar grupo, alterando o seu nome e descrição
 
-}
+        //todo verificar se o grupo com groupName existe e se o nome e a descricao nao sao vazios 
+        //senao da erro
+        db.editGroup(groupName, newGroupName, newDescription)
+    },
+    getAllGroups: function (cb){
+        //Listar todos os grupos
 
-function createTask (task, cb ) {
+        db.getAllGroups()
+    },
+    getGroupDetails: function (groupName, cb){
+        //Listar todos os grupos
+        //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
 
-}
+        //todo verificar se o grupo com groupName existe senao da erro
+        db.getGroupDetails(groupName)
+    },
+    addGameToGroup: function (groupName, name, cb){
+        //Adicionar um jogo a um grupo
 
-function deleteTask (idTask, cb ) {
+        //todo verificar se o grupo com groupName existe e se o jogo existe senao da erro 
 
-}
-// pode receber um idtask ou uma task se a task ja vier com o id
-function updateTask (task ,cb ) {
+        db.addGameToGroup(groupName, data.getGameByName(name))
+    },
+    removeGameFromGroup: function (groupName, name, cb){
+        //Remover um jogo de um grupo
 
+        // todo verificar se o jogo com nome :name existe no grupo com nome groupName, se não existir da erro
+
+        db.removeGameFromGroup(groupName, name)
+    },
+    getGamesFromGroupWithinRange: function (groupName, min, max, cb){
+        //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
+        //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
+        //vêm ordenadas por ordem decrescente da votação média
+
+        if(min > max){
+            return cb(error)
+        }
+        data.getGamesFromGroupWithinRange(groupName, min, max)
+    }
 }
