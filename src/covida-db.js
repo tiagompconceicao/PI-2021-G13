@@ -21,7 +21,6 @@ function createGroup(groupName, description, cb){
         //cb(error)
     }
 
-
     let group = {name: groupName,
                 description: description, 
                 games: []}
@@ -49,11 +48,6 @@ function editGroup(groupName, newGroupName, newDescription, cb){
 function getAllGroups(){
     //Listar todos os grupos
 
-    if(!groups){
-        //Doesnt exists Groups
-        //cd(error)
-    }
-
     //cb(answer(groups))
 }
 
@@ -64,6 +58,7 @@ function getGroupDetails(groupName, cb){
     let group = groups.find(group => group.name.equals(groupName))
 
     if(!group){
+        //Group doesnt exist
         //cb(error)
     }
 
@@ -76,6 +71,14 @@ function addGameToGroup(groupName, game, cb){
     let group = groups.find(group => group.name.equals(groupName))
 
     if(!group){
+        //Group doesnt exist
+        //cb(error)
+    }
+
+    let groupGame = group.games.find(groupGame => groupGame.name.equals(game.name))
+
+    if(groupGame){
+        //Game already exists
         //cb(error)
     }
 
@@ -93,11 +96,10 @@ function removeGameFromGroup(groupName, name, cb){
         //cb(error)
     }
     
-    let game = group.games.find(game => game.name.equals(game))
+    let game = group.games.find(game => game.name.equals(game.name))
     if(!game){
         //Game to remove doesnt exist
         //cb(error)
     }
     //cd(answer(game))
-
 }
