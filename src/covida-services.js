@@ -14,15 +14,15 @@ sendo estes valores parametrizáveis no pedido. Os jogos vêm ordenadas por orde
 const tasksDb = require ("./covida-db")
 
 module.exports = {
-    getPopularGames: getPopularGames,
-    getGameByName: getGameByName,
-    createGroup: createGroup,
-    editGroup: editGroup,
-    getAllGroups: getAllGroups,
-    getGroupDetails: getGroupDetails,
-    addGameToGroup: addGameToGroup,
-    removeGameFromGroup: removeGameFromGroup,
-    getGamesFromGroupWithinRange: getGamesFromGroupWithinRange
+    getPopularGames,
+    getGameByName,
+    createGroup,
+    editGroup,
+    getAllGroups,
+    getGroupDetails,
+    addGameToGroup,
+    removeGameFromGroup,
+    getGamesFromGroupWithinRange
 }
      
 function getPopularGames(cb){

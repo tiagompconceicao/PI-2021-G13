@@ -8,8 +8,8 @@ const client_ID = "gvzqbx37hialxnepf7muzm1vx5bqqr"
 const baseUrl = "https://api.igdb.com/v4/games"
 
 module.exports = {
-    getPopularGames: getPopularGames,
-    getGameByName: getGameByName
+    getPopularGames,
+    getGameByName
 }
 
 /*

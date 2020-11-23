@@ -3,12 +3,12 @@
 const groups = require('./groups')
 
 module.exports = {
-    createGroup: createGroup,
-    editGroup: editGroup,
-    getAllGroups: getAllGroups,
-    getGroupDetails: getGroupDetails,
-    addGameToGroup: addGameToGroup,
-    removeGameFromGroup: removeGameFromGroup
+    createGroup,
+    editGroup,
+    getAllGroups,
+    getGroupDetails,
+    addGameToGroup,
+    removeGameFromGroup
 }
      
 function createGroup(groupName, description, cb){

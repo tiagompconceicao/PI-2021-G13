@@ -16,15 +16,15 @@ let maxId = groups.length
 
 
 module.exports = {
-    getPopularGames: getPopularGames,
-    getGameByName: getGameByName,
-    createGroup: createGroup,
-    editGroup: editGroup,
-    getAllGroups: getAllGroups,
-    getGroupDetails: getGroupDetails,
-    addGameToGroup: addGameToGroup,
-    removeGameFromGroup: removeGameFromGroup,
-    getGamesFromGroupWithinRange: getGamesFromGroupWithinRange
+    getPopularGames,
+    getGameByName,
+    createGroup,
+    editGroup,
+    getAllGroups,
+    getGroupDetails,
+    addGameToGroup,
+    removeGameFromGroup,
+    getGamesFromGroupWithinRange
 }
 //this functions will call a method from services which fulfills the request (req), 
 //and prepares the response (res), for example with the status code 200 OK
