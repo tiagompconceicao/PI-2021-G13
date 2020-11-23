@@ -27,7 +27,7 @@ function createGroup(groupName, description, cb){
         
     groups.push(group)
 
-    //cb(answer(group))
+    //cb(group)
 }
      
 function editGroup(groupName, newGroupName, newDescription, cb){
@@ -42,13 +42,13 @@ function editGroup(groupName, newGroupName, newDescription, cb){
 
     group.name = newGroupName
     group.description = newDescription
-    //cb(answer(group))
+    //cb(group)
 }
 
 function getAllGroups(){
     //Listar todos os grupos
 
-    //cb(answer(groups))
+    //cb(groups)
 }
 
 function getGroupDetails(groupName, cb){
@@ -62,7 +62,7 @@ function getGroupDetails(groupName, cb){
         //cb(error)
     }
 
-    //cb(answer(group))
+    //cb(group)
 }
 
 function addGameToGroup(groupName, game, cb){
@@ -84,7 +84,7 @@ function addGameToGroup(groupName, game, cb){
 
     group.games.push(game)
 
-    //cb(answer(group))
+    //cb(group)
 }
      
 function removeGameFromGroup(groupName, name, cb){
@@ -101,5 +101,5 @@ function removeGameFromGroup(groupName, name, cb){
         //Game to remove doesnt exist
         //cb(error)
     }
-    //cd(answer(game))
+    //cd(game)
 }
