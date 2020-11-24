@@ -1,11 +1,13 @@
 //acesso a api igdb 
 //Use UrlLib Module to make http requests
 
-const urllib = require("./urllib")
+const urllib = require("./node_modules/urllib")
 
-const token = "Bearer ufcyc2wp04hs7z23ojphz0xujefe13"
-const client_ID = "gvzqbx37hialxnepf7muzm1vx5bqqr"
-const baseUrl = "https://api.igdb.com/v4/games"
+const token = "Bearer t19htf57c5iskw9203r5jvm8njhw3j"
+const client_ID = "gvziab9htl4uxx6lanjjf6bqbr16kt"
+const baseUrl = "https://api.igdb.com/v4/games/"
+
+getGameByName('DOOM', null)
 
 module.exports = {
     getPopularGames,
@@ -17,8 +19,12 @@ urllib.request(baseUrl, {
   method: 'GET',
   headers: {
     'Client-ID': client_ID,
-    'Authorization': `Bearer ${toke}`
+    'Authorization': `Bearer ${token}`
   },
+  body: {
+    fields *;
+    where name = name
+  }
 })
 */
 
@@ -36,7 +42,7 @@ function getPopularGames(cb){
     */
 }
  
-function getGameByName(name, cb){
+async function getGameByName(name, cb){
     //Pesquisar jogos pelo nome    
     //let url =`${baseurl}search?clientId=${client_Id}&authorization=${token}&query=${name}` ????
     //todo saber os ulr para fazer request da data necessária
@@ -50,5 +56,15 @@ function getGameByName(name, cb){
 
     //Also can use: search name;
     //search returns the exact game name and similar ones
+
+    let get = await urllib.request(baseUrl, {
+        method: 'GET',
+        headers: {
+            'Client-ID': client_ID,
+            'Authorization': `Bearer ${token}`
+        }
+    })
+
+    console.log(get)
 }
 

@@ -11,7 +11,8 @@ Obter os jogos de um grupo que têm uma votação média (total_rating) entre do
 sendo estes valores parametrizáveis no pedido. Os jogos vêm ordenadas por ordem decrescente da votação média.
 */
 
-const tasksDb = require ("./covida-db")
+//const tasksDb = require ("./covida-db")
+//Entregar logo os modulos required ao criar este modulo no server
 
 module.exports = {
     getPopularGames,
