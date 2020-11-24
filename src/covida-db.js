@@ -11,22 +11,23 @@ module.exports = {
     removeGameFromGroup
 }
      
-function createGroup(groupName, description, cb){
+function createGroup(name, description, cb){
     //Criar grupo atribuindo-lhe um nome e descrição
 
-    let group = groups.find(group => group.name.equals(groupName))
+    let group = groups.find(group => group.name.equals(name))
 
     if(group){
         //Group already exists
-        //cb(error)
+        cb("Group already exists")
     }
 
-    let group = {name: groupName,
+    let group = {name: name,
                 description: description, 
                 games: []}
         
     groups.push(group)
 
+    //cd group ou success message
     //cb(group)
 }
      
@@ -42,27 +43,22 @@ function editGroup(groupName, newGroupName, newDescription, cb){
 
     group.name = newGroupName
     group.description = newDescription
+
+    //cd group ou success message
     //cb(group)
 }
 
 function getAllGroups(){
     //Listar todos os grupos
-
-    //cb(groups)
+    cb(groups)
 }
 
 function getGroupDetails(groupName, cb){
-    //Listar todos os grupos
     //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
 
-    let group = groups.find(group => group.name.equals(groupName))
+    const group = groups.find(group => group.name.equals(groupName))
+    group ? cb(null,group) : cb("Group not found")
 
-    if(!group){
-        //Group doesnt exist
-        //cb(error)
-    }
-
-    //cb(group)
 }
 
 function addGameToGroup(groupName, game, cb){
@@ -72,18 +68,19 @@ function addGameToGroup(groupName, game, cb){
 
     if(!group){
         //Group doesnt exist
-        //cb(error)
+        cb("Group not found")
     }
 
     let groupGame = group.games.find(groupGame => groupGame.name.equals(game.name))
 
     if(groupGame){
         //Game already exists
-        //cb(error)
+        cb("Game already exists")
     }
 
     group.games.push(game)
 
+    //cd group ou success message
     //cb(group)
 }
      
@@ -93,13 +90,15 @@ function removeGameFromGroup(groupName, name, cb){
 
     if(!group){
         //Group doenst exist
-        //cb(error)
+        cb("Group not found")
     }
     
     let game = group.games.find(game => game.name.equals(game.name))
     if(!game){
         //Game to remove doesnt exist
-        //cb(error)
+        cb("Game not found")
     }
-    //cd(game)
+
+    //cd group ou success message
+    cd(null,game)
 }
