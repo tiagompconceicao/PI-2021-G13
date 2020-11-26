@@ -36,7 +36,6 @@ function getPopularGames(cb){
  
  function getGameByName(gameName, cb){
     //Pesquisar jogos pelo nome    
-    //todo saber os ulr para fazer request da data necessária
 
    const settings = {
         method: "POST",
@@ -46,7 +45,7 @@ function getPopularGames(cb){
           'Content-Type': "text/plain",
         },
         data: `fields *;search "${gameName}";limit 1;`,
-      };
+      }
 
       //or fields *,where name = gameName;
     

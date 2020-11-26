@@ -5,7 +5,12 @@ aqui é o usado express*/
 const PORT = 8000
 
 const express = require('express')
-const webapi  = require('./covida-web-api')
+
+const db = require('./groups')
+const igdbDb = require('./igdb-data')
+const covidaDb = require('./covida-db')(db)
+const covidaServices= require('./covida-services')(covidaDb,igdbDb)
+const webapi  = require('./covida-web-api')(covidaServices)
 
 const app = express()
 
