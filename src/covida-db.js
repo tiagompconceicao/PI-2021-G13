@@ -27,11 +27,11 @@ module.exports = function(groups) {
         cb(null,'Group added')
     }
         
-    function editGroup(groupName, newGroupName, newDescription, cb){
+    function editGroup(groupID, newGroupName, newDescription, cb){
         //Editar grupo, alterando o seu nome e descrição
 
         //Get Group details
-        let group = groups.find(group => group.name.equals(groupName))
+        let group = groups.find(group => group.id == groupID)
 
         if(!group){
             //err Group doesnt exist
@@ -50,19 +50,19 @@ module.exports = function(groups) {
         cb(groups)
     }
 
-    function getGroupDetails(groupName, cb){
+    function getGroupDetails(groupID, cb){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
 
-        const group = groups.find(group => group.name.equals(groupName))
+        const group = groups.find(group => group.id == groupID)
         group ? cb(null,group) : cb("Group not found")
 
     }
 
-    function addGameToGroup(groupName, game, cb){
+    function addGameToGroup(groupID, game, cb){
         //Adicionar um jogo a um grupo
 
         //Get Group details
-        let group = groups.find(group => group.name.equals(groupName))
+        let group = groups.find(group => group.id == groupID)
 
         if(!group){
             //err Group doesnt exist
@@ -70,7 +70,7 @@ module.exports = function(groups) {
         }
 
         //Get Game
-        let groupGame = group.games.find(groupGame => groupGame.name.equals(game.name))
+        let groupGame = group.games.find(groupGame => groupGame.id == game.id)
 
         if(groupGame){
             //err Game already exists
@@ -82,11 +82,11 @@ module.exports = function(groups) {
         //cb(success message)
     }
         
-    function removeGameFromGroup(groupName, name, cb){
+    function removeGameFromGroup(groupID, gameID, cb){
         //Remover um jogo de um grupo
 
         //Get Group details
-        let group = groups.find(group => group.name.equals(groupName))
+        let group = groups.find(group => group.id == groupID)
 
         if(!group){
             //err Group doenst exist
@@ -94,7 +94,7 @@ module.exports = function(groups) {
         }
         
         //Get Game details
-        let game = group.games.find(game => game.name.equals(game.name))
+        let game = group.games.find(game => game.id == gameID)
         if(!game){
             //err Game to remove doesnt exist
             cb("Game not found")
