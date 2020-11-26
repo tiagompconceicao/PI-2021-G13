@@ -22,7 +22,6 @@ module.exports = function(data,db) {
 
 
     return {
-        getPopularGames,
         getGameByName,
         createGroup,
         editGroup,
@@ -33,11 +32,11 @@ module.exports = function(data,db) {
         getGamesFromGroupWithinRange
     }
      
-    function getPopularGames(cb){
+    /*function getPopularGames(cb){
         //Obter a lista dos jogos mais populares
 
         data.getPopularGames()
-    }
+    }*/
 
     function getGameByName(name, cb){
         //Pesquisar jogos pelo nome
@@ -90,8 +89,11 @@ module.exports = function(data,db) {
         db.addGameToGroup(groupName, data.getGameByName(name))
     }
         
-    function removeGameFromGroup(groupName, name, cb){
+    function removeGameFromGroup(groupName, gameName, cb){
         //Remover um jogo de um grupo
+        if(!groupName || !gameName){
+            cb('Missing arguments, group name and game name required')
+        }
 
         // todo verificar se o jogo com nome :name existe no grupo com nome groupName, se não existir da erro
 

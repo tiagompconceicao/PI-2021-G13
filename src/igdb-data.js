@@ -10,10 +10,10 @@ const baseUrl = "https://api.igdb.com/v4/games/"
 //getPopularGames(game => console.log(game))                //Works
 
 module.exports = {
-    getPopularGames,
     getGameByName
 }
-     
+  
+/*
 function getPopularGames(cb){
     //Obter a lista dos jogos mais populares
 
@@ -33,6 +33,7 @@ function getPopularGames(cb){
     cb(obj)
 })
 }
+*/
  
  function getGameByName(gameName, cb){
     //Pesquisar jogos pelo nome    

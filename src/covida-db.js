@@ -2,7 +2,7 @@
 
 module.exports = function(groups) {
     if(!groups){
-        throw 'Invalid groups object'
+        //create default db
     }
 
     return {
@@ -99,10 +99,8 @@ module.exports = function(groups) {
             //err Game to remove doesnt exist
             cb("Game not found")
         }
-
         //REMOVE GAME from db
 
-        
         //cd(null,success message)
     }
 }
