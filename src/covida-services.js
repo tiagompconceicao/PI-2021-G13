@@ -46,10 +46,18 @@ module.exports = function(data,db) {
     }
 
     function createGroup(groupName, description, cb){
-        //Criar grupo atribuindo-lhe um nome e descrição
+        if(!groupName || !description){
+            cb('Missing arguments, name and description required')
+        }
 
-        //todo verificar seo nome e a descricao estao vazios, se sim da erro
-        db.createGroup(groupName, description)    
+        //first check if group already exists
+        db.getGroupDetails(groupName,(err,group) => {
+            if(err){
+                db.createGroup(groupName, description,cb)  
+            }
+        })
+
+          
     }
         
     function editGroup(groupName, newGroupName, newDescription, cb){
