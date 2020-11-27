@@ -29,6 +29,7 @@ module.exports = function(services){
     }
 
     function createGroup(req, res){
+        const group = { name: req.body.name, description: req.body.description}
         //Criar grupo atribuindo-lhe um nome e descrição
     }
 

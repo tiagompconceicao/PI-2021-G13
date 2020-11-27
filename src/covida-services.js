@@ -11,7 +11,6 @@ Obter os jogos de um grupo que têm uma votação média (total_rating) entre do
 sendo estes valores parametrizáveis no pedido. Os jogos vêm ordenadas por ordem decrescente da votação média.
 */
 
-
 module.exports = function(data,db) {
     if(!data){
         throw 'Invalid data object'
@@ -19,7 +18,6 @@ module.exports = function(data,db) {
     if(!db){
         throw 'Invalid db object'
     }
-
 
     return {
         getGameByName,
@@ -40,8 +38,11 @@ module.exports = function(data,db) {
 
     function getGameByName(name, cb){
         //Pesquisar jogos pelo nome
+        if(!name){
+            cb('Required name')
+        }
 
-        data.getGameByName(name)
+        data.getGameByName(name, cb)
     }
 
     function createGroup(groupName, description, cb){
@@ -49,65 +50,71 @@ module.exports = function(data,db) {
             cb('Missing arguments, name and description required')
         }
 
-        //first check if group already exists
-        db.getGroupDetails(groupName,(err,group) => {
-            if(err){
-                db.createGroup(groupName, description,cb)  
-            }
-        })
-
-          
+        db.createGroup(groupName, description, cb)  
+       
     }
         
-    function editGroup(groupName, newGroupName, newDescription, cb){
+    function editGroup(group, cb){
         //Editar grupo, alterando o seu nome e descrição
+        if(!group){
+            cb('Required group')
+        }
 
-        //todo verificar se o grupo com groupName existe e se o nome e a descricao nao sao vazios 
-        //senao da erro
-        db.editGroup(groupName, newGroupName, newDescription)
+        db.editGroup(group, cb)
     }
 
     function getAllGroups(cb){
         //Listar todos os grupos
 
-        db.getAllGroups()
+        db.getAllGroups(cb)
     }
         
-    function getGroupDetails(groupName, cb){
-        //Listar todos os grupos
+    
+    function getGroupDetails(groupID, cb){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
-
-        //todo verificar se o grupo com groupName existe senao da erro
-        db.getGroupDetails(groupName)
+        if(!groupID){
+            cb('Required groupID')
+        }
+        
+        db.getGroupDetails(groupID,cb)
     }
         
-    function addGameToGroup(groupName, name, cb){
+    function addGameToGroup(groupID, game, cb){
         //Adicionar um jogo a um grupo
+        if(!groupID || !game){
+            cb('Missing arguments, groupID and game required')
+        }
 
-        //todo verificar se o grupo com groupName existe e se o jogo existe senao da erro 
+        db.getGroupDetails(groupID, (err, group) => {
+            err ? cb(err) : db.addGameToGroup(group, game, cb)
+        })            
 
-        db.addGameToGroup(groupName, data.getGameByName(name))
     }
         
-    function removeGameFromGroup(groupName, gameName, cb){
+    function removeGameFromGroup(groupID, gameID, cb){
         //Remover um jogo de um grupo
-        if(!groupName || !gameName){
+        if(!groupID || !gameID){
             cb('Missing arguments, group name and game name required')
         }
 
-        // todo verificar se o jogo com nome :name existe no grupo com nome groupName, se não existir da erro
+        db.getGroupDetails(groupID, (err, group) => {
+            err ? cb(err) : db.removeGameFromGroup(group, gameID, cb)
+        })   
 
-        db.removeGameFromGroup(groupName, name)
     }
         
-    function getGamesFromGroupWithinRange(groupName, min, max, cb){
+    function getGamesFromGroupWithinRange(groupID, min, max, cb){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
         //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
         //vêm ordenadas por ordem decrescente da votação média
 
-        if(min > max){
-            return cb(error)
+        if(min > max || min < 0 || max > 100){
+            return cb('Bad input')
         }
-        data.getGamesFromGroupWithinRange(groupName, min, max)
+
+        db.getGroupDetails(groupID, (err, group) => {
+            err ? cb(err) : db.getGamesFromGroupWithinRange(group, min, max, cb)
+        }) 
+
     }
 }

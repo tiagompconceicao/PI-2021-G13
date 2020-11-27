@@ -29,7 +29,7 @@ app.post(`/covida/groups`, webapi.createGroup)
 app.put(`/covida/groups/:groupID`, webapi.editGroup)
 app.get(`/covida/groups`, webapi.getAllGroups)
 app.get(`/covida/groups/:groupID`, webapi.getGroupDetails)
-app.put(`/covida/groups/:groupID/games`, webapi.addGameToGroup)
+app.put(`/covida/groups/:groupID/games/:gameID`, webapi.addGameToGroup)
 app.delete(`/covida/groups/:groupID/games/:gameID`, webapi.removeGameFromGroup)
 app.get(`/covida/groups/:groupID/:min/:max`, webapi.getGamesFromGroupWithinRange)
 
