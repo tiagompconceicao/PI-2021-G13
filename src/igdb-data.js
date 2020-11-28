@@ -14,7 +14,6 @@ module.exports = {
 /*
 function getPopularGames(cb){
     //Obter a lista dos jogos mais populares
-
     const settings = {
     method: 'POST',
     headers: {
@@ -24,7 +23,6 @@ function getPopularGames(cb){
     },
   data: "fields *;sort rating desc;where rating!= null;"
 }
-
    const get = urllib.request(baseUrl,settings,(err, data, res) => {
     if(err) return cb("err")
     const obj = JSON.parse(data)
@@ -54,4 +52,3 @@ function getPopularGames(cb){
         cb(null,obj)
     })
 }
-
