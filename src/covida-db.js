@@ -1,105 +1,97 @@
 /** Nossa base de dados, trata de tudo o que for preciso guardar na base de dados */
 
-const groups = require('./groups')
-
-module.exports = {
-    createGroup,
-    editGroup,
-    getAllGroups,
-    getGroupDetails,
-    addGameToGroup,
-    removeGameFromGroup
-}
-     
-function createGroup(groupName, description, cb){
-    //Criar grupo atribuindo-lhe um nome e descrição
-
-    let group = groups.find(group => group.name.equals(groupName))
-
-    if(group){
-        //Group already exists
-        //cb(error)
+module.exports = function(groups) {
+    if(!groups){
+        //create default db
     }
 
-    let group = {name: groupName,
-                description: description, 
-                games: []}
+    return {
+        createGroup,
+        editGroup,
+        getAllGroups,
+        getGroupDetails,
+        addGameToGroup,
+        removeGameFromGroup,
+        getGamesFromGroupWithinRange
+    }
+     
+    function createGroup(groupName, groupDescription, cb){
+        //Criar grupo atribuindo-lhe um nome e descrição
+
+        const validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
+
+        let group = {
+                    id: validId,
+                    name: groupName,
+                    description: groupDescription, 
+                    games: []
+                }
+            
+        groups.push(group)
+        cb(null)
+    }
         
-    groups.push(group)
+    function editGroup(newGroup, cb){
+        //Editar grupo, alterando o seu nome e descrição
 
-    //cb(answer(group))
-}
-     
-function editGroup(groupName, newGroupName, newDescription, cb){
-    //Editar grupo, alterando o seu nome e descrição
-
-    let group = groups.find(group => group.name.equals(groupName))
-
-    if(!group){
-        //Group doesnt exist
-        //cb(error)
+        const group = groups.find(group => group.id == newGroup.id)
+        if(group) {
+            group.name = newGroup.name
+            group.description = newGroup.description
+            cb(null)
+        } else {
+            cb('Group not found')
+        }
     }
 
-    group.name = newGroupName
-    group.description = newDescription
-    //cb(answer(group))
-}
-
-function getAllGroups(){
-    //Listar todos os grupos
-
-    //cb(answer(groups))
-}
-
-function getGroupDetails(groupName, cb){
-    //Listar todos os grupos
-    //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
-
-    let group = groups.find(group => group.name.equals(groupName))
-
-    if(!group){
-        //Group doesnt exist
-        //cb(error)
+    function getAllGroups(){
+        //Listar todos os grupos
+        cb(null,groups)
     }
 
-    //cb(answer(group))
-}
+    function getGroupDetails(groupID, cb){
+        //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
 
-function addGameToGroup(groupName, game, cb){
-    //Adicionar um jogo a um grupo
+        const group = groups.find(group => group.id == groupID)
+        group ? cb(null,group) : cb("Group not found")
 
-    let group = groups.find(group => group.name.equals(groupName))
-
-    if(!group){
-        //Group doesnt exist
-        //cb(error)
     }
 
-    let groupGame = group.games.find(groupGame => groupGame.name.equals(game.name))
+    function addGameToGroup(group, game, cb){
+        //Adicionar um jogo a um grupo
 
-    if(groupGame){
-        //Game already exists
-        //cb(error)
+        //Get Game
+        let groupGame = group.games.find(groupGame => groupGame.id == game.id)
+
+        if(groupGame){
+            cb("Game already exists")
+        } else {
+            group.games.push(game)
+            cb(null)
+        }
+    }
+        
+    function removeGameFromGroup(group, gameID, cb){
+        //Remover um jogo de um grupo
+        
+        let newGames = group.games.filter(game => game.id != gameID)
+
+        if(newGames.length != group.games.length) {
+            group.games = newGames
+            cb(null)
+        } else {
+            cb('Something went wrong')
+        }
     }
 
-    group.games.push(game)
+    function getGamesFromGroupWithinRange(group, min, max, cb){
 
-    //cb(answer(group))
-}
-     
-function removeGameFromGroup(groupName, name, cb){
-    //Remover um jogo de um grupo
-    let group = groups.find(group => group.name.equals(groupName))
+        let filteredGames = group.games.filter(game => game.total_rating > min && game.total_rating < max)
 
-    if(!group){
-        //Group doenst exist
-        //cb(error)
+        filteredGames.sort(function(a, b) {
+            return b.total_rating - a.total_rating;
+          });
+
+        cb(null ,filteredGames)
     }
-    
-    let game = group.games.find(game => game.name.equals(game.name))
-    if(!game){
-        //Game to remove doesnt exist
-        //cb(error)
-    }
-    //cd(answer(game))
 }

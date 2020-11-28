@@ -5,7 +5,12 @@ aqui é o usado express*/
 const PORT = 8000
 
 const express = require('express')
-const webapi  = require('./covida-web-api')
+
+const db = require('./groups')
+const igdbDb = require('./igdb-data')
+const covidaDb = require('./covida-db')(db)
+const covidaServices= require('./covida-services')(covidaDb,igdbDb)
+const webapi  = require('./covida-web-api')(covidaServices)
 
 const app = express()
 
@@ -18,15 +23,15 @@ app.delete()
 app.put()
 app.post()*/
 
-app.get('/covida', webapi.getPopularGames)
-app.get(`/covida/game/:name`, webapi.getGameByName)
+//app.get('/covida', webapi.getPopularGames)
+app.get(`/covida/game/:gameID`, webapi.getGameByName)
 app.post(`/covida/groups`, webapi.createGroup)
-app.put(`/covida/groups/:groupName`, webapi.editGroup)
+app.put(`/covida/groups/:groupID`, webapi.editGroup)
 app.get(`/covida/groups`, webapi.getAllGroups)
-app.get(`/covida/groups/:groupName`, webapi.getGroupDetails)
-app.put(`/covida/groups/:groupName/game/:name`, webapi.addGameToGroup)
-app.delete(`/covida/groups/:groupName/game/:name`, webapi.removeGameFromGroup)
-app.get(`/covida/groups/:groupName/:min/:max`, webapi.getGamesFromGroupWithinRange)
+app.get(`/covida/groups/:groupID`, webapi.getGroupDetails)
+app.put(`/covida/groups/:groupID/games/:gameID`, webapi.addGameToGroup)
+app.delete(`/covida/groups/:groupID/games/:gameID`, webapi.removeGameFromGroup)
+app.get(`/covida/groups/:groupID/:min/:max`, webapi.getGamesFromGroupWithinRange)
 
 app.listen(PORT, () => {
     console.log(`Tasks app listening at http://localhost:${PORT}`)
