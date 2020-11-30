@@ -17,8 +17,13 @@ module.exports = function(groups) {
      
     function createGroup(groupName, groupDescription, cb){
         //Criar grupo atribuindo-lhe um nome e descrição
-
-        const validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
+        let validId
+        if(groups.length != 0){
+            validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
+        } else {
+            validId = 1
+        }
+        
 
         let group = {
                     id: validId,
@@ -44,9 +49,9 @@ module.exports = function(groups) {
         }
     }
 
-    function getAllGroups(){
+    function getAllGroups(cb){
         //Listar todos os grupos
-        cb(null,groups)
+        cb(groups)
     }
 
     function getGroupDetails(groupName, cb){

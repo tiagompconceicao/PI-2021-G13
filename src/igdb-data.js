@@ -47,7 +47,7 @@ function getPopularGames(cb){
       //or fields *,where name = gameName;
     
     const get = urllib.request(baseUrl,settings,(err, data, res) => {
-        if(err) return cb("err")
+        if(err) return cb(err)
         const obj = JSON.parse(data)
         cb(null,obj)
     })

@@ -7,7 +7,6 @@ module.exports = function(services){
     }
 
     return {
-        getPopularGames,
         getGameByName,
         createGroup,
         editGroup,
@@ -22,8 +21,14 @@ module.exports = function(services){
 
     function getGameByName(req, rsp){
         //Pesquisar jogos pelo nome
-        services.getGameByName(req.params.gameName, () => {
+        const name = req.params.gameName
 
+        services.getGameByName(name, (err, game) => {
+            if(err) {
+                handlerErr(err)
+            } else {
+                rsp.json(game)
+            }
         })
 
         
@@ -32,7 +37,7 @@ module.exports = function(services){
     function createGroup(req, rsp){
         //Criar grupo atribuindo-lhe um nome e descrição
 
-        const group = { name: req.body.name, description: req.body.description}
+        const group = { name: req.body.name, description: req.body.description }
 
         services.createGroup(group.name, group.description, processCreateGroup )
 
@@ -112,40 +117,63 @@ module.exports = function(services){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
         //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
         //vêm ordenadas por ordem decrescente da votação média
+        const groupName = req.params.groupName
+        const min = req.params.min
+        const max = req.params.max
+
+        services.getGamesFromGroupWithinRange(groupName, min, max, (err , games) => {
+            if(err){
+                handlerErr(err)
+            } else {
+                rsp.json(games)
+            }
+        })
     }
 
-    function handlerErr(err){
+    function handlerErr(req, rsp, err){
         switch(err){
             case 'Something went wrong':
                 //Something went wrong status code 500 Internal server Error
+                sendServerError(req, rsp, err)
               break
             case 'Resource not found':
                 //status code 404
                 sendNotFound(req, rsp, err)
                 break
+            case 'Bad input':
             case 'Missing arguments':
                 //Bad request status code 400
+                sendBadRequest(req, rsp, err)
                 break
 
         }
     }
 
+    function sendServerError(req, rsp, error){
+        rsp.status(500).json(new Error(err, req.originalUrl))
+    }
+
     function sendNotFound(req, rsp, err) {
         rsp.status(404).json(new Error(err, req.originalUrl))
-      }
+    }
+
+    function sendBadRequest(req, rsp, err) {
+        rsp.status(400).json(new Error(err, req.originalUrl))
+    } 
 
 
-     function sendChangeSuccess(req, rsp, name, changeType, urlSuffix = "") {
+
+    function sendChangeSuccess(req, rsp, name, changeType, urlSuffix = "") {
         rsp.json({
           status : `Group with name ${name} ${changeType}`,
           uri: req.originalUrl + urlSuffix
         })
-      }
+    }
 
-      function sendChangeGameSuccess(req, rsp, gameName, groupName, changeType, urlSuffix = "") {
+    function sendChangeGameSuccess(req, rsp, gameName, groupName, changeType, urlSuffix = "") {
         rsp.json({
           status : `Game with name ${gameName} of group with name ${groupName} ${changeType}`,
           uri: req.originalUrl + urlSuffix
         })
-      }
+    }
 }

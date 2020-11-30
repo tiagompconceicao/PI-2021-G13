@@ -9,7 +9,7 @@ const express = require('express')
 const db = require('./groups')
 const igdbDb = require('./igdb-data')
 const covidaDb = require('./covida-db')(db)
-const covidaServices= require('./covida-services')(covidaDb,igdbDb)
+const covidaServices= require('./covida-services')(igdbDb,covidaDb)
 const webapi  = require('./covida-web-api')(covidaServices)
 
 const app = express()
@@ -24,14 +24,14 @@ app.put()
 app.post()*/
 
 //app.get('/covida', webapi.getPopularGames)
-app.get(`/covida/game/:gameName`, webapi.getGameByName)
+app.get(`/covida/games/:gameName`, webapi.getGameByName)
 app.post(`/covida/groups`, webapi.createGroup)
 app.put(`/covida/groups/:groupName`, webapi.editGroup)
 app.get(`/covida/groups`, webapi.getAllGroups)
 app.get(`/covida/groups/:groupName`, webapi.getGroupDetails)
 app.put(`/covida/groups/:groupName/games/`, webapi.addGameToGroup)
 app.delete(`/covida/groups/:groupName/games/:gameName`, webapi.removeGameFromGroup)
-app.get(`/covida/groups/:groupName/:min/:max`, webapi.getGamesFromGroupWithinRange)
+app.get(`/covida/groups/:groupName/:min/:max`, webapi.getGamesFromGroupWithinRange)    
 
 app.listen(PORT, () => {
     console.log(`Tasks app listening at http://localhost:${PORT}`)

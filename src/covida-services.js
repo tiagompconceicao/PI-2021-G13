@@ -25,7 +25,7 @@ module.exports = function(data,db) {
     function getGameByName(name, cb){
         //Pesquisar jogos pelo nome
         if(!name){
-            cb('Required name')
+            cb('Missing arguments')
         }
 
         data.getGameByName(name, cb)
