@@ -34,7 +34,7 @@ module.exports = function(groups) {
     function editGroup(newGroup, cb){
         //Editar grupo, alterando o seu nome e descrição
 
-        const group = groups.find(group => group.id == newGroup.id)
+        const group = groups.find(group => group.name == newGroup.name)
         if(group) {
             group.name = newGroup.name
             group.description = newGroup.description
@@ -49,10 +49,10 @@ module.exports = function(groups) {
         cb(null,groups)
     }
 
-    function getGroupDetails(groupID, cb){
+    function getGroupDetails(groupName, cb){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
 
-        const group = groups.find(group => group.id == groupID)
+        const group = groups.find(group => group.name == groupName)
         group ? cb(null,group) : cb("Group not found")
 
     }
@@ -61,7 +61,7 @@ module.exports = function(groups) {
         //Adicionar um jogo a um grupo
 
         //Get Game
-        let groupGame = group.games.find(groupGame => groupGame.id == game.id)
+        let groupGame = group.games.find(groupGame => groupGame.name == game.name)
 
         if(groupGame){
             cb("Game already exists")
@@ -71,10 +71,10 @@ module.exports = function(groups) {
         }
     }
         
-    function removeGameFromGroup(group, gameID, cb){
+    function removeGameFromGroup(group, gameName, cb){
         //Remover um jogo de um grupo
         
-        let newGames = group.games.filter(game => game.id != gameID)
+        let newGames = group.games.filter(game => game.name != gameName)
 
         if(newGames.length != group.games.length) {
             group.games = newGames

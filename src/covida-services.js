@@ -33,10 +33,18 @@ module.exports = function(data,db) {
 
     function createGroup(groupName, description, cb){
         if(!groupName || !description){
-            cb('Missing arguments, name and description required')
+            cb('Missing arguments')
         }
 
-        db.createGroup(groupName, description, cb)  
+        db.getGroupDetails(groupName, (err, group) => {
+            if(err) {
+                db.createGroup(groupName, description, cb) 
+            } else {
+                cb('Group already exists')
+            }
+        })
+
+         
        
     }
         
@@ -56,40 +64,40 @@ module.exports = function(data,db) {
     }
         
     
-    function getGroupDetails(groupID, cb){
+    function getGroupDetails(groupName, cb){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
-        if(!groupID){
-            cb('Required groupID')
+        if(!groupName){
+            cb('Missing arguments')
         }
         
-        db.getGroupDetails(groupID,cb)
+        db.getGroupDetails(groupName,cb)
     }
         
-    function addGameToGroup(groupID, game, cb){
+    function addGameToGroup(groupName, game, cb){
         //Adicionar um jogo a um grupo
-        if(!groupID || !game){
-            cb('Missing arguments, groupID and game required')
+        if(!groupName || !game.game){
+            cb('Missing arguments')
         }
 
-        db.getGroupDetails(groupID, (err, group) => {
+        db.getGroupDetails(groupName, (err, group) => {
             err ? cb(err) : db.addGameToGroup(group, game, cb)
         })            
 
     }
         
-    function removeGameFromGroup(groupID, gameID, cb){
+    function removeGameFromGroup(groupName, gameName, cb){
         //Remover um jogo de um grupo
-        if(!groupID || !gameID){
-            cb('Missing arguments, group name and game name required')
+        if(!groupName || !gameName){
+            cb('Missing arguments')
         }
 
-        db.getGroupDetails(groupID, (err, group) => {
-            err ? cb(err) : db.removeGameFromGroup(group, gameID, cb)
+        db.getGroupDetails(groupName, (err, group) => {
+            err ? cb(err) : db.removeGameFromGroup(group, gameName, cb)
         })   
 
     }
         
-    function getGamesFromGroupWithinRange(groupID, min, max, cb){
+    function getGamesFromGroupWithinRange(groupName, min, max, cb){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
         //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
         //vêm ordenadas por ordem decrescente da votação média
@@ -98,7 +106,7 @@ module.exports = function(data,db) {
             return cb('Bad input')
         }
 
-        db.getGroupDetails(groupID, (err, group) => {
+        db.getGroupDetails(groupName, (err, group) => {
             err ? cb(err) : db.getGamesFromGroupWithinRange(group, min, max, cb)
         }) 
 
