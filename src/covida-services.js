@@ -51,7 +51,7 @@ module.exports = function(data,db) {
     function editGroup(group, cb){
         //Editar grupo, alterando o seu nome e descrição
         if(!group){
-            cb('Required group')
+            cb('Missing arguments')
         }
 
         db.editGroup(group, cb)
@@ -75,7 +75,7 @@ module.exports = function(data,db) {
         
     function addGameToGroup(groupName, game, cb){
         //Adicionar um jogo a um grupo
-        if(!groupName || !game.game){
+        if(!groupName || !game.name){
             cb('Missing arguments')
         }
 

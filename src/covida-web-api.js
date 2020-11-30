@@ -41,13 +41,23 @@ module.exports = function(services){
             if(err){
                 //sendBadRequest status code 400
             } else {
-                sendChangeSuccess(req, rsp, group.id, "created")
+                sendChangeSuccess(req, rsp, group.name, "created")
             }
         }
     }
 
     function editGroup(req, rsp){
         //Editar grupo, alterando o seu nome e descrição
+        const group = { description: req.body.description }
+        group.name = req.params.groupName
+
+        services.editGroup(group, (err) => {
+            if(err){
+                handlerErr(err)
+            } else {
+                sendChangeSuccess(req, rsp, group.name, "edited")
+            }
+        })
     }
 
     function getAllGroups(req,rsp){
@@ -58,10 +68,30 @@ module.exports = function(services){
     function getGroupDetails(req, rsp){
     //Listar todos os grupos
     //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
+    const groupName = req.params.groupName
+
+    services.getGroupDetails(groupName, (err, group) => {
+        if(err){
+            handlerErr(err)
+        } else {
+            rsp.json(group)
+        }
+    })
     }
 
     function addGameToGroup(req, rsp){
         //Adicionar um jogo a um grupo
+        const game = req.body
+        const groupName = req.params.groupName
+
+        services.addGameToGroup(groupName, game, (err) => {
+            if(err){
+                handlerErr(err)
+            } else {
+                sendChangeGameSuccess(req, rsp, game.name, groupName, "added")
+            }
+        })
+        
     }
         
     function removeGameFromGroup(req, rsp){
@@ -74,7 +104,7 @@ module.exports = function(services){
             if(err) {
                 handlerErr(err)
             }
-            sendChangeSuccess(req, rsp, id, "deleted")
+            sendChangeGameSuccess(req, rsp, gameName, groupName, "deleted")
           }
     }
         
@@ -89,9 +119,9 @@ module.exports = function(services){
             case 'Something went wrong':
                 //Something went wrong status code 500 Internal server Error
               break
-            case 'Group not found':
+            case 'Resource not found':
                 //status code 404
-                sendNotFound(req, rsp)
+                sendNotFound(req, rsp, err)
                 break
             case 'Missing arguments':
                 //Bad request status code 400
@@ -100,14 +130,21 @@ module.exports = function(services){
         }
     }
 
-    function sendNotFound(req, rsp) {
-        rsp.status(404).json(new Error("Resource not found", req.originalUrl))
+    function sendNotFound(req, rsp, err) {
+        rsp.status(404).json(new Error(err, req.originalUrl))
       }
 
 
-     function sendChangeSuccess(req, rsp, id, changeType, urlSuffix = "") {
+     function sendChangeSuccess(req, rsp, name, changeType, urlSuffix = "") {
         rsp.json({
-          status : `Group with id ${id} ${changeType}`,
+          status : `Group with name ${name} ${changeType}`,
+          uri: req.originalUrl + urlSuffix
+        })
+      }
+
+      function sendChangeGameSuccess(req, rsp, gameName, groupName, changeType, urlSuffix = "") {
+        rsp.json({
+          status : `Game with name ${gameName} of group with name ${groupName} ${changeType}`,
           uri: req.originalUrl + urlSuffix
         })
       }

@@ -53,7 +53,7 @@ module.exports = function(groups) {
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
 
         const group = groups.find(group => group.name == groupName)
-        group ? cb(null,group) : cb("Group not found")
+        group ? cb(null,group) : cb("Resource not found")
 
     }
 
