@@ -32,17 +32,19 @@ module.exports = function(data,db) {
     }
 
     function createGroup(groupName, description, cb){
+        console.log(!groupName || !description)
         if(!groupName || !description){
             cb('Missing arguments')
-        }
+        } else {
 
-        db.getGroupDetails(groupName, (err, group) => {
-            if(err) {
-                db.createGroup(groupName, description, cb) 
-            } else {
-                cb('Group already exists')
-            }
-        })
+            db.getGroupDetails(groupName, (err, group) => {
+                if(err) {
+                    db.createGroup(groupName, description, cb) 
+                } else {
+                    cb('Group already exists')
+                }
+            })
+        }
 
          
        

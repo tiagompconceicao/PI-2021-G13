@@ -25,7 +25,7 @@ module.exports = function(services){
 
         services.getGameByName(name, (err, game) => {
             if(err) {
-                handlerErr(err)
+                handlerErr(req, rsp, err)
             } else {
                 rsp.json(game)
             }
@@ -45,6 +45,7 @@ module.exports = function(services){
         function processCreateGroup(err){
             if(err){
                 //sendBadRequest status code 400
+                handlerErr(req, rsp, err)
             } else {
                 sendChangeSuccess(req, rsp, group.name, "created")
             }
@@ -58,7 +59,7 @@ module.exports = function(services){
 
         services.editGroup(group, (err) => {
             if(err){
-                handlerErr(err)
+                handlerErr(req, rsp, err)
             } else {
                 sendChangeSuccess(req, rsp, group.name, "edited")
             }
@@ -77,7 +78,7 @@ module.exports = function(services){
 
     services.getGroupDetails(groupName, (err, group) => {
         if(err){
-            handlerErr(err)
+            handlerErr(req, rsp, err)
         } else {
             rsp.json(group)
         }
@@ -91,7 +92,7 @@ module.exports = function(services){
 
         services.addGameToGroup(groupName, game, (err) => {
             if(err){
-                handlerErr(err)
+                handlerErr(req, rsp, err)
             } else {
                 sendChangeGameSuccess(req, rsp, game.name, groupName, "added")
             }
@@ -107,7 +108,7 @@ module.exports = function(services){
 
         function processDelete(err) {
             if(err) {
-                handlerErr(err)
+                handlerErr(req, rsp, err)
             }
             sendChangeGameSuccess(req, rsp, gameName, groupName, "deleted")
           }
@@ -123,7 +124,7 @@ module.exports = function(services){
 
         services.getGamesFromGroupWithinRange(groupName, min, max, (err , games) => {
             if(err){
-                handlerErr(err)
+                handlerErr(req, rsp, err)
             } else {
                 rsp.json(games)
             }
@@ -132,33 +133,36 @@ module.exports = function(services){
 
     function handlerErr(req, rsp, err){
         switch(err){
-            case 'Something went wrong':
+            case "Something went wrong":
                 //Something went wrong status code 500 Internal server Error
                 sendServerError(req, rsp, err)
               break
-            case 'Resource not found':
+            case "Resource not found":
                 //status code 404
-                sendNotFound(req, rsp, err)
+                sendNotFound(rsp,err)
                 break
-            case 'Bad input':
-            case 'Missing arguments':
+            case "Group already exists":
+            case "Bad input":
+            case "Missing arguments":
                 //Bad request status code 400
-                sendBadRequest(req, rsp, err)
+                sendBadRequest(rsp, err)
                 break
 
         }
     }
 
     function sendServerError(req, rsp, error){
-        rsp.status(500).json(new Error(err, req.originalUrl))
+        rsp.status(500).json({
+            error:new Error(error , req.originalUrl)}
+            )
     }
 
-    function sendNotFound(req, rsp, err) {
-        rsp.status(404).json(new Error(err, req.originalUrl))
+    function sendNotFound(rsp, err) {
+        rsp.status(404).json({error:err})
     }
 
-    function sendBadRequest(req, rsp, err) {
-        rsp.status(400).json(new Error(err, req.originalUrl))
+    function sendBadRequest(rsp, err) {
+        rsp.status(400).json({error:err})
     } 
 
 

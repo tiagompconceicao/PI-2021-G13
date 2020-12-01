@@ -17,16 +17,17 @@ module.exports = function(groups) {
      
     function createGroup(groupName, groupDescription, cb){
         //Criar grupo atribuindo-lhe um nome e descrição
+        /*
         let validId
         if(groups.length != 0){
             validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
         } else {
             validId = 1
-        }
+        }*/
         
 
         let group = {
-                    id: validId,
+                    //id: validId,
                     name: groupName,
                     description: groupDescription, 
                     games: []
@@ -85,7 +86,7 @@ module.exports = function(groups) {
             group.games = newGames
             cb(null)
         } else {
-            cb('Something went wrong')
+            cb('Resource not found')
         }
     }
 
