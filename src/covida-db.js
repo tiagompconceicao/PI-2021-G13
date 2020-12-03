@@ -2,7 +2,7 @@
 
 module.exports = function(groups) {
     if(!groups){
-        //create default db
+        groups = require('./initialGroups')
     }
 
     return {
@@ -46,7 +46,7 @@ module.exports = function(groups) {
             group.description = newGroup.description
             cb(null)
         } else {
-            cb('Group not found')
+            cb('Resource not found')
         }
     }
 

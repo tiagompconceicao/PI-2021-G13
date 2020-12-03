@@ -5,8 +5,6 @@ const token = "t19htf57c5iskw9203r5jvm8njhw3j"
 const client_ID = "gvziab9htl4uxx6lanjjf6bqbr16kt"
 const baseUrl = "https://api.igdb.com/v4/games/"
 
-//getGameByName('Fifa 14', game => console.log(game))
-
 module.exports = {
     getGameByName
 }
@@ -41,10 +39,8 @@ function getPopularGames(cb){
           'Authorization': `Bearer ${token}`,
           'Content-Type': "text/plain",
         },
-        data: `fields *;search "${gameName}";limit 1;`,
+        data: `fields name,total_rating;search "${gameName}";limit 1;`,
       }
-
-      //or fields *,where name = gameName;
     
     const get = urllib.request(baseUrl,settings,(err, data, res) => {
         if(err) return cb(err)

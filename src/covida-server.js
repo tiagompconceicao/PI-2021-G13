@@ -16,13 +16,6 @@ const app = express()
 
 app.use(express.json())
 
-/*app.get('/covida')
-app.get()
-app.get()
-app.delete()
-app.put()
-app.post()*/
-
 //app.get('/covida', webapi.getPopularGames)
 app.get(`/covida/games/:gameName`, webapi.getGameByName)
 app.post(`/covida/groups`, webapi.createGroup)

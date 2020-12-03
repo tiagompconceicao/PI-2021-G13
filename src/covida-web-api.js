@@ -147,7 +147,6 @@ module.exports = function(services){
                 //Bad request status code 400
                 sendBadRequest(rsp, err)
                 break
-
         }
     }
 

@@ -45,9 +45,6 @@ module.exports = function(data,db) {
                 }
             })
         }
-
-         
-       
     }
         
     function editGroup(group, cb){
