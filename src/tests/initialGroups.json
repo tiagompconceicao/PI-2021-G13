@@ -1,6 +1,10 @@
 {
-    "name" : "",
-    "description" : "",
-    "games" : []
-
+    "name" : "Sports",
+    "description" : "grupo do grupo 13",
+    "games" : [
+        {
+            "name" : "Doom",
+            "total_rating" : 70
+        }
+    ]
 }
