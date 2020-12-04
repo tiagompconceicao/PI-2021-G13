@@ -1,3 +1,4 @@
+
 module.exports = function(data,db) {
     if(!data){
         throw 'Invalid data object'
@@ -27,7 +28,6 @@ module.exports = function(data,db) {
     }
 
     function createGroup(groupName, description, cb){
-        console.log(!groupName || !description)
         if(!groupName || !description){
             cb('Missing arguments')
         } else {
@@ -75,13 +75,18 @@ module.exports = function(data,db) {
             cb('Missing arguments')
         }
 
-        //getGame do igdb
-
-        db.getGroupDetails(groupId, (err, group) => {
-            err ? cb(err) : db.addGameToGroup(group, game, cb)
-        }) 
-        //ver no igdb se o jogo existe           
-
+        data.getGameById(gameId, (err, data) => {
+            if(err){
+                cb(err)
+            } else if(data) {
+                let game = data
+                db.getGroupDetails(groupId, (err, group) => {
+                err ? cb(err) : db.addGameToGroup(group, game, cb)
+                }) 
+            } else {
+                cb("Resource not found")
+            }
+        })
     }
         
     function removeGameFromGroup(groupId, gameId, cb){

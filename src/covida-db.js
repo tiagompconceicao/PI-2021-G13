@@ -34,7 +34,7 @@ module.exports = function(groups) {
                 }
             
         groups.push(group)
-        cb(null)
+        cb(null,validId)
     }
         
     function editGroup(newGroup, cb){

@@ -30,7 +30,7 @@ describe('Game deletion', () => {
     const groupName = "Sports"
     const gameName = "Doom"
     beforeEach(() => {
-      groupsDb = groupsDbFunction(require('./initialGroups'))
+      groupsDb = groupsDbFunction
       groupsServices = groupsServicesFunction(groupsDb)
     })
     

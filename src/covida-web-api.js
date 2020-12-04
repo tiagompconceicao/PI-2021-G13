@@ -25,7 +25,7 @@ module.exports = function(services){
 
         services.getGameByName(name, (err, game) => {
             if(err) {
-                handlerErr(req, rsp, err)
+                handlerErr(rsp, err)
             } else {
                 rsp.json(game)
             }
@@ -42,12 +42,12 @@ module.exports = function(services){
         services.createGroup(group.name, group.description, processCreateGroup )
 
 
-        function processCreateGroup(err){
+        function processCreateGroup(err,id){
             if(err){
                 //sendBadRequest status code 400
-                handlerErr(req, rsp, err)
+                handlerErr(rsp, err)
             } else {
-                sendChangeSuccess(req, rsp, group.name, "created")
+                sendChangeSuccess(req, rsp, id, "created")
             }
         }
     }
@@ -59,7 +59,7 @@ module.exports = function(services){
 
         services.editGroup(group, (err) => {
             if(err){
-                handlerErr(req, rsp, err)
+                handlerErr(rsp, err)
             } else {
                 sendChangeSuccess(req, rsp, group.id, "edited")
             }
@@ -78,7 +78,7 @@ module.exports = function(services){
 
     services.getGroupDetails(groupId, (err, group) => {
         if(err){
-            handlerErr(req, rsp, err)
+            handlerErr(rsp, err)
         } else {
             rsp.json(group)
         }
@@ -90,11 +90,11 @@ module.exports = function(services){
         const gameId = req.params.gameId
         const groupId = req.params.groupId
 
-        services.addGameToGroup(groupName, game, (err) => {
+        services.addGameToGroup(groupId, gameId, (err) => {
             if(err){
-                handlerErr(req, rsp, err)
+                handlerErr(rsp, err)
             } else {
-                sendChangeGameSuccess(req, rsp, game.name, groupName, "added")
+                sendChangeGameSuccess(req, rsp, gameId, groupId, "added")
             }
         })
         
@@ -108,7 +108,7 @@ module.exports = function(services){
 
         function processDelete(err) {
             if(err) {
-                handlerErr(req, rsp, err)
+                handlerErr(rsp, err)
             }
             sendChangeGameSuccess(req, rsp, gameId, groupId, "deleted")
           }
@@ -124,18 +124,18 @@ module.exports = function(services){
 
         services.getGamesFromGroupWithinRange(groupId, min, max, (err , games) => {
             if(err){
-                handlerErr(req, rsp, err)
+                handlerErr(rsp, err)
             } else {
                 rsp.json(games)
             }
         })
     }
 
-    function handlerErr(req, rsp, err){
+    function handlerErr(rsp, err){
         switch(err){
             case "Something went wrong":
                 //Something went wrong status code 500 Internal server Error
-                sendServerError(req, rsp, err)
+                sendServerError(rsp, err)
               break
             case "Resource not found":
                 //status code 404
@@ -150,10 +150,8 @@ module.exports = function(services){
         }
     }
 
-    function sendServerError(req, rsp, error){
-        rsp.status(500).json({
-            error:new Error(error , req.originalUrl)}
-            )
+    function sendServerError(rsp, err){
+        rsp.status(500).json({error:err})
     }
 
     function sendNotFound(rsp, err) {
@@ -168,14 +166,14 @@ module.exports = function(services){
 
     function sendChangeSuccess(req, rsp, name, changeType, urlSuffix = "") {
         rsp.json({
-          status : `Group with name ${name} ${changeType}`,
+          status : `Group with id ${name} ${changeType}`,
           uri: req.originalUrl + urlSuffix
         })
     }
 
     function sendChangeGameSuccess(req, rsp, gameName, groupName, changeType, urlSuffix = "") {
         rsp.json({
-          status : `Game with name ${gameName} of group with name ${groupName} ${changeType}`,
+          status : `Game with id ${gameName} of group with id ${groupName} ${changeType}`,
           uri: req.originalUrl + urlSuffix
         })
     }
