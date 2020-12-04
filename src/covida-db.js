@@ -18,25 +18,33 @@ module.exports = function(groups) {
     function createGroup(groupName, groupDescription, cb){
         //Criar grupo atribuindo-lhe um nome e descrição
         
-        let validId
-        if(groups.length != 0){
-            validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
-        } else {
-            validId = 1
-        }
-        
+        const group = groups.find(group => group.name == groupName && group.description == groupDescription)
 
-        let group = {
-                    id: validId,
-                    name: groupName,
-                    description: groupDescription, 
-                    games: []
-                }
+        if(group) {
+            cb("Group already exists")
+        } else {
+
+            let validId
+            if(groups.length != 0){
+                validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
+            } else {
+                validId = 1
+            }
             
-        groups.push(group)
-        cb(null,validId)
+
+            let group = {
+                        id: validId,
+                        name: groupName,
+                        description: groupDescription, 
+                        games: []
+                    }
+                
+            groups.push(group)
+            cb(null,validId)
+
+        }      
     }
-        
+            
     function editGroup(newGroup, cb){
         //Editar grupo, alterando o seu nome e descrição
 
