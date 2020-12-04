@@ -84,7 +84,8 @@ module.exports = function(data,db) {
 
         db.getGroupDetails(groupId, (err, group) => {
             err ? cb(err) : db.addGameToGroup(group, game, cb)
-        })            
+        }) 
+        //ver no igdb se o jogo existe           
 
     }
         
