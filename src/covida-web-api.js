@@ -54,14 +54,14 @@ module.exports = function(services){
 
     function editGroup(req, rsp){
         //Editar grupo, alterando o seu nome e descrição
-        const group = { description: req.body.description }
-        group.name = req.params.groupName
+        const group = { name : req.body.name, description: req.body.description }
+        group.id = req.params.groupId
 
         services.editGroup(group, (err) => {
             if(err){
                 handlerErr(req, rsp, err)
             } else {
-                sendChangeSuccess(req, rsp, group.name, "edited")
+                sendChangeSuccess(req, rsp, group.id, "edited")
             }
         })
     }
@@ -74,9 +74,9 @@ module.exports = function(services){
     function getGroupDetails(req, rsp){
     //Listar todos os grupos
     //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
-    const groupName = req.params.groupName
+    const groupId = req.params.groupId
 
-    services.getGroupDetails(groupName, (err, group) => {
+    services.getGroupDetails(groupId, (err, group) => {
         if(err){
             handlerErr(req, rsp, err)
         } else {
@@ -87,8 +87,8 @@ module.exports = function(services){
 
     function addGameToGroup(req, rsp){
         //Adicionar um jogo a um grupo
-        const game = req.body
-        const groupName = req.params.groupName
+        const gameId = req.params.gameId
+        const groupId = req.params.groupId
 
         services.addGameToGroup(groupName, game, (err) => {
             if(err){
@@ -102,15 +102,15 @@ module.exports = function(services){
         
     function removeGameFromGroup(req, rsp){
         //Remover um jogo de um grupo
-        const groupName = req.params.groupName
-        const gameName = req.params.gameName
-        services.removeGameFromGroup(groupName,gameName,processDelete)
+        const gameId = req.params.gameId
+        const groupId = req.params.groupId
+        services.removeGameFromGroup(groupId,gameId,processDelete)
 
         function processDelete(err) {
             if(err) {
                 handlerErr(req, rsp, err)
             }
-            sendChangeGameSuccess(req, rsp, gameName, groupName, "deleted")
+            sendChangeGameSuccess(req, rsp, gameId, groupId, "deleted")
           }
     }
         
@@ -118,11 +118,11 @@ module.exports = function(services){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
         //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
         //vêm ordenadas por ordem decrescente da votação média
-        const groupName = req.params.groupName
+        const groupId = req.params.groupId
         const min = req.params.min
         const max = req.params.max
 
-        services.getGamesFromGroupWithinRange(groupName, min, max, (err , games) => {
+        services.getGamesFromGroupWithinRange(groupId, min, max, (err , games) => {
             if(err){
                 handlerErr(req, rsp, err)
             } else {

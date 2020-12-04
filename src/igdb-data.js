@@ -39,7 +39,7 @@ function getPopularGames(cb){
           'Authorization': `Bearer ${token}`,
           'Content-Type': "text/plain",
         },
-        data: `fields name,total_rating;search "${gameName}";limit 1;`,
+        data: `fields name,total_rating;search "${gameName}";`,
       }
     
     const get = urllib.request(baseUrl,settings,(err, data, res) => {

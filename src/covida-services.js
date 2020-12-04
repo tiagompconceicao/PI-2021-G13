@@ -37,6 +37,8 @@ module.exports = function(data,db) {
             cb('Missing arguments')
         } else {
 
+            //Passar um grupo ja com id?
+            
             db.getGroupDetails(groupName, (err, group) => {
                 if(err) {
                     db.createGroup(groupName, description, cb) 
@@ -63,40 +65,42 @@ module.exports = function(data,db) {
     }
         
     
-    function getGroupDetails(groupName, cb){
+    function getGroupDetails(groupId, cb){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
-        if(!groupName){
+        if(!groupId){
             cb('Missing arguments')
         }
         
-        db.getGroupDetails(groupName,cb)
+        db.getGroupDetails(groupId,cb)
     }
         
-    function addGameToGroup(groupName, game, cb){
+    function addGameToGroup(groupId, gameId, cb){
         //Adicionar um jogo a um grupo
-        if(!groupName || !game.name){
+        if(!groupId || !gameId){
             cb('Missing arguments')
         }
 
-        db.getGroupDetails(groupName, (err, group) => {
+        //getGame do igdb
+
+        db.getGroupDetails(groupId, (err, group) => {
             err ? cb(err) : db.addGameToGroup(group, game, cb)
         })            
 
     }
         
-    function removeGameFromGroup(groupName, gameName, cb){
+    function removeGameFromGroup(groupId, gameId, cb){
         //Remover um jogo de um grupo
-        if(!groupName || !gameName){
+        if(!groupId || !gameId){
             cb('Missing arguments')
         }
 
-        db.getGroupDetails(groupName, (err, group) => {
-            err ? cb(err) : db.removeGameFromGroup(group, gameName, cb)
+        db.getGroupDetails(groupId, (err, group) => {
+            err ? cb(err) : db.removeGameFromGroup(group, gameId, cb)
         })   
 
     }
         
-    function getGamesFromGroupWithinRange(groupName, min, max, cb){
+    function getGamesFromGroupWithinRange(groupId, min, max, cb){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
         //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
         //vêm ordenadas por ordem decrescente da votação média
@@ -105,8 +109,8 @@ module.exports = function(data,db) {
             return cb('Bad input')
         }
 
-        db.getGroupDetails(groupName, (err, group) => {
-            err ? cb(err) : db.getGamesFromGroupWithinRange(group, min, max, cb)
+        db.getGroupDetails(groupId, (err, group) => {
+            err ? cb(err) : db.getGamesFromGroupWithinRange(groupId, min, max, cb)
         }) 
 
     }

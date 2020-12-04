@@ -17,17 +17,17 @@ module.exports = function(groups) {
      
     function createGroup(groupName, groupDescription, cb){
         //Criar grupo atribuindo-lhe um nome e descrição
-        /*
+        
         let validId
         if(groups.length != 0){
             validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
         } else {
             validId = 1
-        }*/
+        }
         
 
         let group = {
-                    //id: validId,
+                    id: validId,
                     name: groupName,
                     description: groupDescription, 
                     games: []
@@ -40,7 +40,7 @@ module.exports = function(groups) {
     function editGroup(newGroup, cb){
         //Editar grupo, alterando o seu nome e descrição
 
-        const group = groups.find(group => group.name == newGroup.name)
+        const group = groups.find(group => group.id == newGroup.id)
         if(group) {
             group.name = newGroup.name
             group.description = newGroup.description
@@ -55,10 +55,10 @@ module.exports = function(groups) {
         cb(groups)
     }
 
-    function getGroupDetails(groupName, cb){
+    function getGroupDetails(groupId, cb){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
 
-        const group = groups.find(group => group.name == groupName)
+        const group = groups.find(group => group.id == groupId)
         group ? cb(null,group) : cb("Resource not found")
 
     }
@@ -67,7 +67,7 @@ module.exports = function(groups) {
         //Adicionar um jogo a um grupo
 
         //Get Game
-        let groupGame = group.games.find(groupGame => groupGame.name == game.name)
+        let groupGame = group.games.find(groupGame => groupGame.id == game.id)
 
         if(groupGame){
             cb("Game already exists")
@@ -77,10 +77,10 @@ module.exports = function(groups) {
         }
     }
         
-    function removeGameFromGroup(group, gameName, cb){
+    function removeGameFromGroup(group, gameId, cb){
         //Remover um jogo de um grupo
         
-        let newGames = group.games.filter(game => game.name != gameName)
+        let newGames = group.games.filter(game => game.id != gameId)
 
         if(newGames.length != group.games.length) {
             group.games = newGames
