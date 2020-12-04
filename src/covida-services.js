@@ -16,11 +16,6 @@ module.exports = function(data,db) {
         removeGameFromGroup,
         getGamesFromGroupWithinRange
     }
-     
-    /*function getPopularGames(cb){
-        //Obter a lista dos jogos mais populares
-        data.getPopularGames()
-    }*/
 
     function getGameByName(name, cb){
         //Pesquisar jogos pelo nome
@@ -38,7 +33,7 @@ module.exports = function(data,db) {
         } else {
 
             //Passar um grupo ja com id?
-            
+
             db.getGroupDetails(groupName, (err, group) => {
                 if(err) {
                     db.createGroup(groupName, description, cb) 
@@ -111,7 +106,7 @@ module.exports = function(data,db) {
         }
 
         db.getGroupDetails(groupId, (err, group) => {
-            err ? cb(err) : db.getGamesFromGroupWithinRange(groupId, min, max, cb)
+            err ? cb(err) : db.getGamesFromGroupWithinRange(group, min, max, cb)
         }) 
 
     }
