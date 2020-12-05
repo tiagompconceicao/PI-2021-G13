@@ -3,6 +3,7 @@
 module.exports = function(groups) {
     if(!groups){
         groups = require('./initialGroups')
+
     }
 
     return {
@@ -18,7 +19,7 @@ module.exports = function(groups) {
     function createGroup(groupName, groupDescription, cb){
         //Criar grupo atribuindo-lhe um nome e descrição
         
-        const group = groups.find(group => group.name == groupName && group.description == groupDescription)
+        const group = groups.find(group => group.name == groupName )
 
         if(group) {
             cb("Group already exists")

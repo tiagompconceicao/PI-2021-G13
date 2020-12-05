@@ -31,17 +31,26 @@ module.exports = function(data,db) {
         if(!groupName || !description){
             cb('Missing arguments')
         } else {
-            db.createGroup(groupName, description, cb) 
+
+            //Passar um grupo ja com id?
+
+            db.getGroupDetails(groupName, (err, group) => {
+                if(err) {
+                    db.createGroup(groupName, description, cb) 
+                } else {
+                    cb('Group already exists')
+                }
+            })
         }
     }
         
     function editGroup(group, cb){
         //Editar grupo, alterando o seu nome e descrição
-        if(!group.name || !group.description){
+        if(!group){
             cb('Missing arguments')
-        } else {
-            db.editGroup(group, cb)
         }
+
+        db.editGroup(group, cb)
     }
 
     function getAllGroups(cb){
@@ -53,6 +62,9 @@ module.exports = function(data,db) {
     
     function getGroupDetails(groupId, cb){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
+        if(!groupId){
+            cb('Missing arguments')
+        }
         
         db.getGroupDetails(groupId,cb)
     }

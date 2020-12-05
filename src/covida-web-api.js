@@ -78,7 +78,7 @@ module.exports = function(services){
 
     services.getGroupDetails(groupId, (err, group) => {
         if(err){
-            sendNotFound(rsp, err)
+            handlerErr(rsp, err)
         } else {
             rsp.json(group)
         }
