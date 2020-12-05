@@ -1,43 +1,19 @@
 const groupsDbFunction = require('../covida-db')
 const groupsServicesFunction = require('../covida-services')
 
-
-/*
-describe('Group deletion', () => {
-    let groupsDb = null
-    let groupsServices = null
-    beforeEach(() => {
-      groupsDb = groupsDbFunction(require('./initialGroups'))
-      groupsServices = groupsServicesFunction(groupsDb)
-    })
-    
-    test('delete an existing task', function (done) {
-      groupsServices.deleteGroup(1, (err, data) => { 
-        expect(err).toBeFalsy()
-        groupsServices.getAllGroups(tasks => { 
-          expect(groups.length).toBe(0)
-          done()
-        })
-      })
-    })
-})
-*/
-
 // TESTS FOR GAME DELETION
 describe('Game deletion', () => {
     let groupsDb = null
     let groupsServices = null
-    const groupName = "Sports"
-    const gameName = "Doom"
     beforeEach(() => {
       groupsDb = groupsDbFunction
       groupsServices = groupsServicesFunction(groupsDb)
     })
     
     test('delete an existing game', function (done) {
-      groupsServices.deleteGameFromGroup(groupName,gameName, (err, data) => { 
+      groupsServices.deleteGameFromGroup(1,1, (err, data) => { 
         expect(err).toBeFalsy()
-        groupsServices.getGroupDetails(groupName,group => { 
+        groupsServices.getGroupDetails(1,group => { 
           expect(group.games.length).toBe(0)
           done()
         })
@@ -46,9 +22,9 @@ describe('Game deletion', () => {
 
 
     test('delete a non existing game', function (done) {
-        groupsServices.removeGameFromGroup(GroupName,"FIFA 13", (err, data) => { 
+        groupsServices.removeGameFromGroup(1,2, (err, data) => { 
           expect(err).toBeTruthy()
-          groupsServices.getGroupDetails(groupName,group => { 
+          groupsServices.getGroupDetails(1,group => { 
             expect(group.games.length).toBe(1)
             done()
           })
@@ -56,13 +32,13 @@ describe('Game deletion', () => {
       })
     
       test('delete the same game twice', function (done) {
-        groupsServices.removeGameFromGroup(GroupName,gameName, (err, data) => { 
+        groupsServices.removeGameFromGroup(1,1, (err, data) => { 
           expect(err).toBeFalsy()
-          groupsServices.getGroupDetails(GroupName,group => { 
+          groupsServices.getGroupDetails(1,group => { 
             expect(group.games.length).toBe(0)
-            groupsServices.removeGameFromGroup(GroupName,gameName, (err, data) => { 
+            groupsServices.removeGameFromGroup(1,1, (err, data) => { 
               expect(err).toBeTruthy()
-              groupsServices.getGroupDetails(GroupName,group => { 
+              groupsServices.getGroupDetails(1,group => { 
                 expect(group.games.length).toBe(0)
                 done()
               })
@@ -78,21 +54,21 @@ describe('Game creation', () => {
   let groupsServices = null
   const groupName = "Sports"
   beforeEach(() => {
-    groupsDb = groupsDbFunction(require('./initialGroups'))
+    groupsDb = groupsDbFunction
     groupsServices = groupsServicesFunction(groupsDb)
   })
   
   test('Add an existing game', function (done) {
-    const game = 
-  {
+    const game = {
     id: 1,
     name: "Doom",
     description: "Description form diablo",
     total_rating: 70
-  }
-    groupsServices.addGameToGroup(groupName,game, (err, data) => { 
+    }
+
+    groupsServices.addGameToGroup(1,game, (err, data) => { 
       expect(err).toBeTruthy()
-      groupsServices.getGroupDetails(groupName,group => { 
+      groupsServices.getGroupDetails(1,group => { 
         expect(group.games.length).toBe(1)
         done()
       })
@@ -103,14 +79,14 @@ describe('Game creation', () => {
   test('Add a non existing game', function (done) {
     const game = 
   {
-    id: 1,
+    id: 2,
     name: "diablo",
     description: "Description form diablo",
     total_rating: 90
   }
-      groupsServices.addGameToGroup(GroupName,game, (err, data) => { 
+      groupsServices.addGameToGroup(1,game, (err, data) => { 
         expect(err).toBeFalsy()
-        groupsServices.getGroupDetails(groupName,group => { 
+        groupsServices.getGroupDetails(1,group => { 
           expect(group.games.length).toBe(2)
           done()
         })
@@ -120,18 +96,18 @@ describe('Game creation', () => {
     test('Add the same game twice', function (done) {
       const game = 
       {
-        id: 1,
+        id: 2,
         name: "diablo",
         description: "Description form diablo",
         total_rating: 90
       }
-      groupsServices.addGameToGroup(GroupName,game, (err, data) => { 
+      groupsServices.addGameToGroup(1,game, (err, data) => { 
         expect(err).toBeFalsy()
-        groupsServices.getGroupDetails(GroupName,group => { 
+        groupsServices.getGroupDetails(1,group => { 
           expect(group.games.length).toBe(2)
-          groupsServices.addGameToGroup(GroupName,game, (err, data) => { 
+          groupsServices.addGameToGroup(1,game, (err, data) => { 
             expect(err).toBeTruthy()
-            groupsServices.getGroupDetails(GroupName,group => { 
+            groupsServices.getGroupDetails(1,group => { 
               expect(group.games.length).toBe(2)
               done()
             })
@@ -146,12 +122,12 @@ describe('Group Creation', () => {
   let groupsDb = null
   let groupsServices = null
   beforeEach(() => {
-    groupsDb = groupsDbFunction(require('./initialGroups'))
+    groupsDb = groupsDbFunction
     groupsServices = groupsServicesFunction(groupsDb)
   })
   
   test('Create an existing Group', function (done) {
-    groupsServices.createGroup("Sports","Description for group Sports", (err, data) => { 
+    groupsServices.createGroup("Sports","Description for Sports", (err, data) => { 
       expect(err).toBeTruthy()
       groupsServices.getAllGroups(groups => { 
         expect(groups.length).toBe(1)
@@ -193,7 +169,7 @@ describe('Group Edition ', () => {
   let groupsDb = null
   let groupsServices = null
   beforeEach(() => {
-  groupsDb = groupsDbFunction(require('./initialGroups'))
+  groupsDb = groupsDbFunction
   groupsServices = groupsServicesFunction(groupsDb)
   })
   
@@ -202,11 +178,11 @@ describe('Group Edition ', () => {
   {
     id: 1,
     name: "Sports",
-    description: "Description for Sports",
+    description: "New description for Sports",
   }
     groupsServices.editGroup(group, (err, data) => { 
       expect(err).toBeFalsy()
-      groupsServices.getGroupDetails(group.name, editedGroup => { 
+      groupsServices.getGroupDetails(group.id, editedGroup => { 
         expect(editedGroup.description).toBe(group.description)
         done()
       })
@@ -217,7 +193,7 @@ describe('Group Edition ', () => {
   test('Edit a non existing group', function (done) {
     const group = 
     {
-      id: 1,
+      id: 2,
       name: "Corridas",
       description: "Description for Corridas",
     }
@@ -226,20 +202,4 @@ describe('Group Edition ', () => {
         done()
       })
     })
-  
-    test('Edit the same group twice', function (done) {
-      groupsServices.createGroup("Corridas","Description for group Corridas" , (err, data) => { 
-        expect(err).toBeFalsy()
-        groupsServices.getAllGroups(groups => { 
-          expect(groups.length).toBe(2)
-          groupsServices.createGroup("Corridas","Description for group Corridas" , (err, data) => { 
-            expect(err).toBeTruthy()
-            groupsServices.getAllGroups(groups => { 
-              expect(groups.length).toBe(2)
-              done()
-            })
-          })
-        })
-      })
-    }) 
 })
