@@ -1,10 +1,10 @@
 # Covida API
 
-The base part of the URI path for the groups covida is `/covida`.
+The base part of the URI path for the groups api is `/covida`.
 
 The media type used in all requests and responses that have content on body is `applicaton/json`.
 
-The following sections describe each covida resource.
+The following sections describe each api resource.
 
 ---
 
