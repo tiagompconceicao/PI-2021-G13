@@ -79,7 +79,7 @@ module.exports = function(groups) {
         let groupGame = group.games.find(groupGame => groupGame.id == game.id)
 
         if(groupGame){
-            cb("Game already exists")
+            cb("Game already exists in this group")
         } else {
             group.games.push(game)
             cb(null)

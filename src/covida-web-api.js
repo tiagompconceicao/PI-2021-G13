@@ -141,6 +141,7 @@ module.exports = function(services){
                 //status code 404
                 sendNotFound(rsp,err)
                 break
+            case "Game already exists in this group":
             case "Group already exists":
             case "Bad input":
             case "Missing arguments":
@@ -171,10 +172,10 @@ module.exports = function(services){
         })
     }
 
-    function sendChangeGameSuccess(req, rsp, gameName, groupName, changeType, urlSuffix = "") {
+    function sendChangeGameSuccess(req, rsp, gameName, groupName, changeType) {
         rsp.json({
-          status : `Game with id ${gameName} of group with id ${groupName} ${changeType}`,
-          uri: req.originalUrl + urlSuffix
+          status : `Game with id ${gameName} ${changeType} in group with id ${groupName}`,
+          uri: req.originalUrl
         })
     }
 }

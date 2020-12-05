@@ -31,16 +31,7 @@ module.exports = function(data,db) {
         if(!groupName || !description){
             cb('Missing arguments')
         } else {
-
-            //Passar um grupo ja com id?
-
-            db.getGroupDetails(groupName, (err, group) => {
-                if(err) {
-                    db.createGroup(groupName, description, cb) 
-                } else {
-                    cb('Group already exists')
-                }
-            })
+            db.createGroup(groupName, description, cb) 
         }
     }
         
@@ -106,7 +97,7 @@ module.exports = function(data,db) {
         //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
         //vêm ordenadas por ordem decrescente da votação média
 
-        if(min > max || min < 0 || max > 100){
+        if(min > max || min <= 0 || max >= 100){
             return cb('Bad input')
         }
 
