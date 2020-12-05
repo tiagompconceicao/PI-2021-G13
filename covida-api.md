@@ -166,13 +166,13 @@ PUT /groups/{id}
 ```
 
 ```curl
-curl http://localhost:8000/covida/groups/2         \
-    -X PUT                                     \
-    -H 'Content-type: application/json'        \
-    -d '{                                      \
+curl http://localhost:8000/covida/groups/2      \
+    -X PUT                                      \
+    -H 'Content-type: application/json'         \
+    -d '{                                       \
       "name": "group11",                        \
-      "description": "description of group 11",\
-      "foo": 123234                            \
+      "description": "description of group 11", \
+      "foo": 123234                             \
     }'  
 ```
 
@@ -213,9 +213,9 @@ PUT /groups/{id}/games/{gameId}
 ```
 
 ```curl
-curl http://localhost:8000/covida/groups/2         \
+curl http://localhost:8000/covida/groups/2     \
     -X PUT                                     \
-    -H 'Content-type: application/json'        \ 
+
 ```
 
 - Request:
@@ -224,7 +224,6 @@ curl http://localhost:8000/covida/groups/2         \
     - gameId - The game identifier
   - Body: none
 
-```
 
 - Response:
   - Success:
@@ -250,7 +249,7 @@ DELETE /groups/{id}/games/{gameId}
 ```
 
 ```curl
-curl http://localhost:8000/covida/groups/2         \
+curl http://localhost:8000/covida/groups/2      \
     -X DELETE                                   \
 ```
 
@@ -259,8 +258,6 @@ curl http://localhost:8000/covida/groups/2         \
     - id - The group identifier
     - gameId - The game identifier
   - Body: none
-
-```
 
 - Response:
   - Success:
@@ -286,7 +283,7 @@ GET /groups/{id}/{min}/{max}
 ```
 
 ```curl
-curl http://localhost:8000/covida/groups/70/90
+curl http://localhost:8000/covida/groups/70/90  
 ```
 
 
