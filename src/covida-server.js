@@ -16,6 +16,7 @@ const app = express()
 
 app.use(express.json())
 
+app.get('/covida',apiCheck)
 app.get(`/covida/games/:gameName`, webapi.getGameByName)
 app.post(`/covida/groups`, webapi.createGroup)
 app.put(`/covida/groups/:groupId`, webapi.editGroup)
@@ -28,3 +29,13 @@ app.get(`/covida/groups/:groupId/:min/:max`, webapi.getGamesFromGroupWithinRange
 app.listen(PORT, () => {
     console.log(`Tasks app listening at http://localhost:${PORT}`)
 })
+
+function apiCheck(req, rsp) {
+    rsp
+      .status(200)
+      .json({
+      "name": "groups api",
+      "version": "1.0.0",
+      "description": "PI Groups API running"
+      })
+  }
