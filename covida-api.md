@@ -32,7 +32,6 @@ curl http://localhost:8000/covida/
           "description": "PI covida api running"
       }
       ```
-
 ---
 
 ## Obtain all groups
@@ -75,7 +74,6 @@ curl http://localhost:8000/covida/groups
         ]
       }
     ```
-
 ---
 
 ## Obtain a specific group
@@ -111,7 +109,6 @@ curl http://localhost:8000/covida/groups/1
 
   - Errors:
     - 404 (see Common Error Handling section)
-
 ---
 
 ## Create a group
@@ -121,10 +118,10 @@ POST /groups
 ```
 
 ```curl
-curl http://localhost:8000/covida/groups        \
-  -X POST                                   \
-  -H 'Content-type: application/json'       \
-  -d '{                                     \
+curl http://localhost:8000/covida/groups     \
+  -X POST                                    \
+  -H 'Content-type: application/json'        \
+  -d '{                                      \
     "name": "group1",                        \
     "description": "description of group 1"  \
   }'  
@@ -156,7 +153,6 @@ curl http://localhost:8000/covida/groups        \
     ```
     - Errors:
     - 400 (see Common Error Handling section)
-  
 ---
 
 ## Edit a group
@@ -172,7 +168,6 @@ curl http://localhost:8000/covida/groups/2      \
     -d '{                                       \
       "name": "group11",                        \
       "description": "description of group 11", \
-      "foo": 123234                             \
     }'  
 ```
 
@@ -186,7 +181,6 @@ curl http://localhost:8000/covida/groups/2      \
     "name": "group11",
     "description": "description of group 11"
   },  
-
 ```
 
 - Response:
@@ -197,7 +191,7 @@ curl http://localhost:8000/covida/groups/2      \
  
     ```json
       {
-        "status" : "group wit id 2 updated",
+        "status" : "group with id 2 updated",
         "uri": "/covida/groups/2"
       }
     ```
@@ -213,9 +207,8 @@ PUT /groups/{id}/games/{gameId}
 ```
 
 ```curl
-curl http://localhost:8000/covida/groups/2     \
-    -X PUT                                     \
-
+curl http://localhost:8000/covida/groups/2/games/250     \
+    -X PUT                                               \
 ```
 
 - Request:
@@ -233,8 +226,8 @@ curl http://localhost:8000/covida/groups/2     \
  
     ```json
       {
-        "status" : "Game with id 1 added in group with id 2",
-        "uri": "/covida/groups/2/games"
+        "status" : "Game with id 250 added in group with id 2",
+        "uri": "/covida/groups/2/games/250"
       }
     ```
 
@@ -249,8 +242,8 @@ DELETE /groups/{id}/games/{gameId}
 ```
 
 ```curl
-curl http://localhost:8000/covida/groups/2      \
-    -X DELETE                                   \
+curl http://localhost:8000/covida/groups/2/games/250      \
+    -X DELETE                                             \
 ```
 
 - Request:
@@ -267,8 +260,8 @@ curl http://localhost:8000/covida/groups/2      \
  
     ```json
       {
-        "status" : "Game with id 1 removed in group with id 2",
-        "uri": "/covida/groups/2/games"
+        "status" : "Game with id 250 removed in group with id 2",
+        "uri": "/covida/groups/2/games/250"
       }
     ```
 
