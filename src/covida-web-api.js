@@ -133,16 +133,14 @@ module.exports = function(services){
 
     function handlerErr(rsp, err){
         switch(err){
-            case "Something went wrong":
-                //Something went wrong status code 500 Internal server Error
-                sendServerError(rsp, err)
-              break
             case "Resource not found":
                 //status code 404
                 sendNotFound(rsp,err)
                 break
             case "Game already exists in this group":
             case "Group already exists":
+                //409 Conflict
+                sendConflict(rsp, err)
             case "Bad input":
             case "Missing arguments":
                 //Bad request status code 400
@@ -151,8 +149,8 @@ module.exports = function(services){
         }
     }
 
-    function sendServerError(rsp, err){
-        rsp.status(500).json({error:err})
+    function sendConflict(rsp, err){
+        rsp.status(409).json({error:err})
     }
 
     function sendNotFound(rsp, err) {

@@ -342,13 +342,15 @@ Every time the request contains a URI for a resource not managed by the covida, 
         "error": "Resource not found",
       }
 
-### 500 - Internal Server Error
+### 409 - Conflict
 
-Every time for some reason the operation isnt successful, but all user input are correct we admit that occured an internal error, in that cases the response has a 500 status code with the following sample body.
+Indicates that the request could not be processed because of conflict in the current state of the resource.
+This error normally occurs when the user tries to create an existing group or adding a game to a group that are already
+added
 
 - Body:
 
   ```json
       {
-        "error": "Something went wrong",
+        "error": "Resource already exists",
       }
