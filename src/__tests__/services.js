@@ -134,8 +134,8 @@ describe('Group Edition ', () => {
     const group = 
   {
     id: 1,
-    name: "Sports",
-    description: "Description for Sports",
+    name: "ESports",
+    description: "Description for ESports",
   }
     groupsServices.editGroup(group, (err) => { 
       expect(err).toBeFalsy()
