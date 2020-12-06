@@ -152,7 +152,7 @@ curl http://localhost:8000/covida/groups     \
       }
     ```
     - Errors:
-    - 400 (see Common Error Handling section)
+      - 400 and 409 (see Common Error Handling section)
 ---
 
 ## Edit a group
@@ -232,7 +232,7 @@ curl http://localhost:8000/covida/groups/2/games/250     \
     ```
 
   - Errors:
-    - 400 and 404 (see Common Error Handling section)
+    - 400, 404 and 409 (see Common Error Handling section)
   
 ---
 ## Remove a game from a group
