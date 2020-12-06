@@ -51,9 +51,14 @@ module.exports = function(groups) {
 
         const group = groups.find(group => group.id == newGroup.id)
         if(group) {
-            group.name = newGroup.name
-            group.description = newGroup.description
-            cb(null)
+            const dGroup = groups.find(group => group.name == newGroup.name)
+            if(dGroup){
+                cb("Already exists a group with this name")
+            } else {
+                group.name = newGroup.name
+                group.description = newGroup.description
+                cb(null)
+            }
         } else {
             cb('Resource not found')
         }
@@ -61,7 +66,7 @@ module.exports = function(groups) {
 
     function getAllGroups(cb){
         //Listar todos os grupos
-        cb(groups)
+        cb(null,groups)
     }
 
     function getGroupDetails(groupId, cb){

@@ -197,7 +197,7 @@ curl http://localhost:8000/covida/groups/2      \
     ```
 
   - Errors:
-    - 400 and 404 (see Common Error Handling section)
+    - 400, 404 and 409 (see Common Error Handling section)
   
 ---
 ## Add a game to a group

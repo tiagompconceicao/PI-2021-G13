@@ -68,7 +68,7 @@ module.exports = function(services){
 
     function getAllGroups(req,rsp){
         //Listar todos os grupos
-        services.getAllGroups(groups => rsp.json(groups))
+        services.getAllGroups((err,groups) => rsp.json(groups))
     }
 
     function getGroupDetails(req, rsp){
@@ -137,6 +137,7 @@ module.exports = function(services){
                 //status code 404
                 sendNotFound(rsp,err)
                 break
+            case "Already exists a group with this name":
             case "Game already exists in this group":
             case "Group already exists":
                 //409 Conflict
