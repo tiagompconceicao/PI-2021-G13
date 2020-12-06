@@ -164,16 +164,16 @@ module.exports = function(services){
 
 
 
-    function sendChangeSuccess(req, rsp, name, changeType, urlSuffix = "") {
+    function sendChangeSuccess(req, rsp, id, changeType, urlSuffix = "") {
         rsp.json({
-          status : `Group with id ${name} ${changeType}`,
+          status : `Group with id ${id} ${changeType}`,
           uri: req.originalUrl + urlSuffix
         })
     }
 
-    function sendChangeGameSuccess(req, rsp, gameName, groupName, changeType) {
+    function sendChangeGameSuccess(req, rsp, gameId, groupId, changeType) {
         rsp.json({
-          status : `Game with id ${gameName} ${changeType} in group with id ${groupName}`,
+          status : `Game with id ${gameId} ${changeType} in group with id ${groupId}`,
           uri: req.originalUrl
         })
     }
