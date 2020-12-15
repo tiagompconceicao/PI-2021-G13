@@ -9,6 +9,7 @@ module.exports = function(groups) {
     return {
         createGroup,
         editGroup,
+        deleteGroup,
         getAllGroups,
         getGroupDetails,
         getGameDetails,
@@ -45,6 +46,17 @@ module.exports = function(groups) {
         if(group) {
             group.name = newGroup.name
             group.description = newGroup.description
+            cb(null)
+        } else {
+            cb('Resource not found')
+        }
+    }
+
+    function deleteGroup(groupId,cb){
+        let newGroups = groups.filter(group => group.id != groupId)
+
+        if(newGroups.length != groups.length) {
+            groups = newGroups
             cb(null)
         } else {
             cb('Resource not found')

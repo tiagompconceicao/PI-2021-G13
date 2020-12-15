@@ -10,6 +10,7 @@ module.exports = function(services){
         getGameByName,
         createGroup,
         editGroup,
+        deleteGroup,
         getAllGroups,
         getGroupDetails,
         addGameToGroup,
@@ -47,7 +48,7 @@ module.exports = function(services){
                 //sendBadRequest status code 400
                 handleError(req, rsp, err)
             } else {
-                sendChangeSuccess(req, rsp, id, "created")
+                sendGroupChangeSuccess(req, rsp, id, "created")
             }
         }
     }
@@ -61,9 +62,23 @@ module.exports = function(services){
             if(err){
                 handleError(req, rsp, err)
             } else {
-                sendChangeSuccess(req, rsp, group.id, "edited")
+                sendGroupChangeSuccess(req, rsp, group.id, "edited")
             }
         })
+    }
+
+    function deleteGroup(req, rsp){
+        //Remover um grupo
+        const groupId = req.params.groupId
+        services.deleteGroup(groupId,processDelete)
+
+        function processDelete(err) {
+            if(err) {
+                handleError(req, rsp, err)
+            }
+            sendGroupChangeSuccess(req, rsp, groupId, "deleted")
+          }
+
     }
 
     function getAllGroups(req,rsp){
@@ -94,7 +109,7 @@ module.exports = function(services){
             if(err){
                 handleError(req, rsp, err)
             } else {
-                sendChangeGameSuccess(req, rsp, gameId, groupId, "added")
+                sendGameChangeSuccess(req, rsp, gameId, groupId, "added")
             }
         })
         
@@ -110,7 +125,7 @@ module.exports = function(services){
             if(err) {
                 handleError(req, rsp, err)
             }
-            sendChangeGameSuccess(req, rsp, gameId, groupId, "deleted")
+            sendGameChangeSuccess(req, rsp, gameId, groupId, "deleted")
           }
     }
         
@@ -162,14 +177,14 @@ module.exports = function(services){
 
 
 
-    function sendChangeSuccess(req, rsp, id, changeType, urlSuffix = "") {
+    function sendGroupChangeSuccess(req, rsp, id, changeType, urlSuffix = "") {
         rsp.json({
           status : `Group with id ${id} ${changeType}`,
           uri: req.originalUrl + urlSuffix
         })
     }
 
-    function sendChangeGameSuccess(req, rsp, gameId, groupId, changeType) {
+    function sendGameChangeSuccess(req, rsp, gameId, groupId, changeType) {
         rsp.json({
           status : `Game with id ${gameId} ${changeType} in group with id ${groupId}`,
           uri: req.originalUrl

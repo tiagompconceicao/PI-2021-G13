@@ -11,6 +11,7 @@ module.exports = function(data,db) {
         getGameByName,
         createGroup,
         editGroup,
+        deleteGroup,
         getAllGroups,
         getGroupDetails,
         addGameToGroup,
@@ -42,6 +43,16 @@ module.exports = function(data,db) {
         }
 
         db.editGroup(group, cb)
+    }
+
+    function deleteGroup(groupId, cb){
+        if(!groupId){
+            cb('Missing arguments')
+        }
+
+        db.getGroupDetails(groupId, (err, group) => {
+            err ? cb(err) : db.deleteGroup(groupId, cb)
+        })   
     }
 
     function getAllGroups(cb){
@@ -84,19 +95,6 @@ module.exports = function(data,db) {
                 }
             })
         })
-
-        /*data.getGameById(gameId, (err, data) => {
-            if(err){
-                cb(err)
-            } else if(data) {
-                let game = data
-                db.getGroupDetails(groupId, (err, group) => {
-                err ? cb(err) : db.addGameToGroup(group, game, cb)
-                }) 
-            } else {
-                cb("Resource not found")
-            }
-        })*/
     }
         
     function removeGameFromGroup(groupId, gameId, cb){
