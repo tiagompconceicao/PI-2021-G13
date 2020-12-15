@@ -25,7 +25,7 @@ module.exports = function(services){
 
         services.getGameByName(name, (err, game) => {
             if(err) {
-                handlerErr(rsp, err)
+                handleError(req, rsp, err)
             } else {
                 rsp.json(game)
             }
@@ -45,7 +45,7 @@ module.exports = function(services){
         function processCreateGroup(err,id){
             if(err){
                 //sendBadRequest status code 400
-                handlerErr(rsp, err)
+                handleError(req, rsp, err)
             } else {
                 sendChangeSuccess(req, rsp, id, "created")
             }
@@ -59,7 +59,7 @@ module.exports = function(services){
 
         services.editGroup(group, (err) => {
             if(err){
-                handlerErr(rsp, err)
+                handleError(req, rsp, err)
             } else {
                 sendChangeSuccess(req, rsp, group.id, "edited")
             }
@@ -78,7 +78,7 @@ module.exports = function(services){
 
     services.getGroupDetails(groupId, (err, group) => {
         if(err){
-            handlerErr(rsp, err)
+            handleError(req, rsp, err)
         } else {
             rsp.json(group)
         }
@@ -92,7 +92,7 @@ module.exports = function(services){
 
         services.addGameToGroup(groupId, gameId, (err) => {
             if(err){
-                handlerErr(rsp, err)
+                handleError(req, rsp, err)
             } else {
                 sendChangeGameSuccess(req, rsp, gameId, groupId, "added")
             }
@@ -108,7 +108,7 @@ module.exports = function(services){
 
         function processDelete(err) {
             if(err) {
-                handlerErr(rsp, err)
+                handleError(req, rsp, err)
             }
             sendChangeGameSuccess(req, rsp, gameId, groupId, "deleted")
           }
@@ -124,42 +124,40 @@ module.exports = function(services){
 
         services.getGamesFromGroupWithinRange(groupId, min, max, (err , games) => {
             if(err){
-                handlerErr(rsp, err)
+                handleError(req, rsp, err)
             } else {
                 rsp.json(games)
             }
         })
     }
 
-    function handlerErr(rsp, err){
+    function handleError(req, rsp, err){
         switch(err){
             case "Resource not found":
                 //status code 404
-                sendNotFound(rsp,err)
+                sendNotFound(req, rsp,err)
                 break
-            case "Already exists a group with this name":
             case "Game already exists in this group":
-            case "Group already exists":
                 //409 Conflict
-                sendConflict(rsp, err)
+                sendConflict(req, rsp, err)
             case "Bad input":
             case "Missing arguments":
                 //Bad request status code 400
-                sendBadRequest(rsp, err)
+                sendBadRequest(req, rsp, err)
                 break
         }
     }
 
-    function sendConflict(rsp, err){
-        rsp.status(409).json({error:err})
+    function sendConflict(req, rsp, msg){
+        rsp.status(409).json({error:msg,uri:req.originalUrl})
     }
 
-    function sendNotFound(rsp, err) {
-        rsp.status(404).json({error:err})
+    function sendNotFound(req, rsp, msg) {
+        rsp.status(404).json({error:msg,uri:req.originalUrl})
     }
 
-    function sendBadRequest(rsp, err) {
-        rsp.status(400).json({error:err})
+    function sendBadRequest(req, rsp, msg) {
+        rsp.status(400).json({error:msg,uri:req.originalUrl})
     } 
 
 

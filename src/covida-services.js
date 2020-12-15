@@ -37,7 +37,7 @@ module.exports = function(data,db) {
         
     function editGroup(group, cb){
         //Editar grupo, alterando o seu nome e descrição
-        if(!group){
+        if(!group.description || !group.name){
             cb('Missing arguments')
         }
 
@@ -66,7 +66,26 @@ module.exports = function(data,db) {
             cb('Missing arguments')
         }
 
-        data.getGameById(gameId, (err, data) => {
+        db.getGroupDetails(groupId,(err, group) => {
+            err ? cb(err) : db.getGameDetails(group,gameId,(err,game) => {
+                if(err){
+                    data.getGameById(gameId,(err,data) => {
+                        if(err){
+                            cb(err)
+                        } else if(data) {
+                            //let game = data
+                            db.addGameToGroup(group, data, cb)
+                        } else {
+                            cb("Resource not found")
+                        }
+                    })
+                } else {
+                    cb("Game already exists in this group")
+                }
+            })
+        })
+
+        /*data.getGameById(gameId, (err, data) => {
             if(err){
                 cb(err)
             } else if(data) {
@@ -77,7 +96,7 @@ module.exports = function(data,db) {
             } else {
                 cb("Resource not found")
             }
-        })
+        })*/
     }
         
     function removeGameFromGroup(groupId, gameId, cb){

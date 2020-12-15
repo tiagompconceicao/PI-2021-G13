@@ -11,6 +11,7 @@ module.exports = function(groups) {
         editGroup,
         getAllGroups,
         getGroupDetails,
+        getGameDetails,
         addGameToGroup,
         removeGameFromGroup,
         getGamesFromGroupWithinRange
@@ -19,31 +20,22 @@ module.exports = function(groups) {
     function createGroup(groupName, groupDescription, cb){
         //Criar grupo atribuindo-lhe um nome e descrição
         
-        const group = groups.find(group => group.name == groupName )
-
-        if(group) {
-            cb("Group already exists")
+        let validId
+        if(groups.length != 0){
+        validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
         } else {
-
-            let validId
-            if(groups.length != 0){
-                validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
-            } else {
-                validId = 1
-            }
+            validId = 1
+        }
             
-
-            let group = {
-                        id: validId,
-                        name: groupName,
-                        description: groupDescription, 
-                        games: []
-                    }
+        let group = {
+            id: validId,
+            name: groupName,
+            description: groupDescription, 
+            games: []
+        }
                 
-            groups.push(group)
-            cb(null,validId)
-
-        }      
+        groups.push(group)
+        cb(null,validId)     
     }
             
     function editGroup(newGroup, cb){
@@ -51,14 +43,9 @@ module.exports = function(groups) {
 
         const group = groups.find(group => group.id == newGroup.id)
         if(group) {
-            const dGroup = groups.find(group => group.name == newGroup.name)
-            if(dGroup){
-                cb("Already exists a group with this name")
-            } else {
-                group.name = newGroup.name
-                group.description = newGroup.description
-                cb(null)
-            }
+            group.name = newGroup.name
+            group.description = newGroup.description
+            cb(null)
         } else {
             cb('Resource not found')
         }
@@ -77,18 +64,16 @@ module.exports = function(groups) {
 
     }
 
+    function getGameDetails(group, gameId, cb){
+        //Adicionar um jogo a um grupo
+        const game = group.games.find(game => game.id == gameId)
+        game ? cb(null,game) : cb("Resource not found")
+    }
+
     function addGameToGroup(group, game, cb){
         //Adicionar um jogo a um grupo
-
-        //Get Game
-        let groupGame = group.games.find(groupGame => groupGame.id == game.id)
-
-        if(groupGame){
-            cb("Game already exists in this group")
-        } else {
-            group.games.push(game)
-            cb(null)
-        }
+        group.games.push(game)
+        cb(null)
     }
         
     function removeGameFromGroup(group, gameId, cb){
