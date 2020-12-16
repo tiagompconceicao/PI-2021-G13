@@ -20,19 +20,15 @@ module.exports = function(services){
     //this functions will call a method from services which fulfills the request (req), 
     //and prepares the response (res), for example with the status code 200 OK
 
-    function getGameByName(req, rsp){
+    async function getGameByName(req, rsp){
         //Pesquisar jogos pelo nome
         const name = req.params.gameName
 
-        services.getGameByName(name, (err, game) => {
-            if(err) {
-                handleError(req, rsp, err)
-            } else {
-                rsp.json(game)
-            }
+        await services.getGameByName(name).then((game) => {
+            rsp.json(game)
+        }).catch(err => {
+            handleError(req, rsp, err)
         })
-
-        
     }
 
     function createGroup(req, rsp){

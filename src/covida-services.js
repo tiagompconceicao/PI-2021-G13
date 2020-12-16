@@ -1,3 +1,4 @@
+const { throws } = require("assert")
 
 module.exports = function(data,db) {
     if(!data){
@@ -19,13 +20,10 @@ module.exports = function(data,db) {
         getGamesFromGroupWithinRange
     }
 
-    function getGameByName(name, cb){
+    async function getGameByName(name){
         //Pesquisar jogos pelo nome
-        if(!name){
-            cb('Missing arguments')
-        }
 
-        data.getGameByName(name, cb)
+        return await data.getGameByName(name)
     }
 
     function createGroup(groupName, description, cb){

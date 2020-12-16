@@ -10,23 +10,24 @@ module.exports = {
     getGameById
 }
  
-function getGameByName(gameName, cb){
+function getGameByName(gameName){
   //Pesquisar jogos pelo nome    
 
  const settings = {
-       method: "POST",
-       headers: {
-        'Client-ID': client_ID,
-         'Authorization': `Bearer ${token}`,
-         'Content-Type': "text/plain",
-       },
-      data: `fields name,total_rating,summary;search "${gameName}";`,
-     }
-    
-  const get = urllib.request(baseUrl,settings,(err, data, res) => {
-      if(err) return cb(err)
-       const obj = JSON.parse(data)
-       cb(null,obj)
+    method: "POST",
+    headers: {
+      'Client-ID': client_ID,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': "text/plain",
+    },
+    data: `fields name,total_rating,summary;search "${gameName}";`
+  }
+
+  return urllib.request(baseUrl,settings).then( result => {
+  //result: {data: buffer, res: response object}
+    return JSON.parse(result.data)
+  }).catch( err => {
+    throw err
   })
 }
 
@@ -34,14 +35,14 @@ function getGameById(gameId, cb){
   //Pesquisar jogos pelo nome    
 
  const settings = {
-       method: "POST",
-       headers: {
-        'Client-ID': client_ID,
-         'Authorization': `Bearer ${token}`,
-         'Content-Type': "text/plain",
-       },
-      data: `fields name,total_rating,summary;where id = ${gameId};`,
-     }
+    method: "POST",
+    headers: {
+      'Client-ID': client_ID,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': "text/plain",
+    },
+    data: `fields name,total_rating,summary;where id = ${gameId};`
+  }
     
   const get = urllib.request(baseUrl,settings,(err, data, res) => {
       if(err) return cb(err)
