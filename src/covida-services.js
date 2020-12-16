@@ -1,4 +1,4 @@
-const { throws } = require("assert")
+
 
 module.exports = function(data,db) {
     if(!data){
@@ -23,102 +23,104 @@ module.exports = function(data,db) {
     async function getGameByName(name){
         //Pesquisar jogos pelo nome
 
-        return await data.getGameByName(name)
+        return data.getGameByName(name)
     }
 
-    function createGroup(groupName, description, cb){
+    async function createGroup(groupName, description){
         if(!groupName || !description){
-            cb('Missing arguments')
+            throw 'Missing arguments'
         } else {
-            db.createGroup(groupName, description, cb) 
+            return db.createGroup(groupName, description) 
         }
     }
         
-    function editGroup(group, cb){
+    async function editGroup(group){
         //Editar grupo, alterando o seu nome e descrição
         if(!group.description || !group.name){
-            cb('Missing arguments')
+            throw 'Missing arguments'
         }
-
-        db.editGroup(group, cb)
+        return db.editGroup(group)
     }
 
-    function deleteGroup(groupId, cb){
+    async function deleteGroup(groupId){
         if(!groupId){
-            cb('Missing arguments')
+            throw 'Missing arguments'
         }
 
-        db.getGroupDetails(groupId, (err, group) => {
-            err ? cb(err) : db.deleteGroup(groupId, cb)
-        })   
+        db.getGroupDetails(groupId).then(group => {
+            return db.deleteGroup(groupId)
+        }).catch( err => {
+            throw err
+        }) 
     }
 
-    function getAllGroups(cb){
+    async function getAllGroups(){
         //Listar todos os grupos
 
-        db.getAllGroups(cb)
+        return db.getAllGroups()
     }
         
     
-    function getGroupDetails(groupId, cb){
+    async function getGroupDetails(groupId){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
         if(!groupId){
-            cb('Missing arguments')
+            throw 'Missing arguments'
         }
         
-        db.getGroupDetails(groupId,cb)
+        return db.getGroupDetails(groupId)
     }
         
-    function addGameToGroup(groupId, gameId, cb){
+    async function addGameToGroup(groupId, gameId){
         //Adicionar um jogo a um grupo
         if(!groupId || !gameId){
-            cb('Missing arguments')
+            throw 'Missing arguments'
         }
 
-        db.getGroupDetails(groupId,(err, group) => {
-            err ? cb(err) : db.getGameDetails(group,gameId,(err,game) => {
-                if(err){
-                    data.getGameById(gameId,(err,data) => {
-                        if(err){
-                            cb(err)
-                        } else if(data) {
-                            //let game = data
-                            db.addGameToGroup(group, data, cb)
-                        } else {
-                            cb("Resource not found")
-                        }
-                    })
-                } else {
-                    cb("Game already exists in this group")
-                }
+        return db.getGroupDetails(groupId).then(group => {
+            return db.getGameDetails(group,gameId).then( game => {
+                throw "Game already exists in this group"
+            }).catch(err => {
+                return data.getGameById(gameId).then(data => {
+                    if(data == null) {
+                        throw "Resource not found"
+                    } else {
+                        return db.addGameToGroup(group, data)
+                    }
+                }).catch(err => {
+                    throw err
+                })
             })
+        }).catch(err => {
+            throw err
         })
     }
         
-    function removeGameFromGroup(groupId, gameId, cb){
+    async function removeGameFromGroup(groupId, gameId){
         //Remover um jogo de um grupo
         if(!groupId || !gameId){
-            cb('Missing arguments')
+            throw 'Missing arguments'
         }
 
-        db.getGroupDetails(groupId, (err, group) => {
-            err ? cb(err) : db.removeGameFromGroup(group, gameId, cb)
-        })   
-
+        return db.getGroupDetails(groupId).then(group => {
+            return db.removeGameFromGroup(group, gameId)
+        }).catch(err => {
+            throw err
+        })
     }
         
-    function getGamesFromGroupWithinRange(groupId, min, max, cb){
+    async function getGamesFromGroupWithinRange(groupId, min, max){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
         //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
         //vêm ordenadas por ordem decrescente da votação média
 
         if(min > max || min <= 0 || max >= 100){
-            return cb('Bad input')
+            throw 'Bad input'
         }
 
-        db.getGroupDetails(groupId, (err, group) => {
-            err ? cb(err) : db.getGamesFromGroupWithinRange(group, min, max, cb)
-        }) 
-
+        db.getGroupDetails(groupId).then( group => {
+            return db.getGamesFromGroupWithinRange(group, min, max)
+        }).catch(err => {
+            throw err
+        })
     }
 }

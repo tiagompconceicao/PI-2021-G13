@@ -23,7 +23,7 @@ function getGameByName(gameName){
     data: `fields name,total_rating,summary;search "${gameName}";`
   }
 
-  return urllib.request(baseUrl,settings).then( result => {
+  return urllib.request(baseUrl,settings).then(result => {
   //result: {data: buffer, res: response object}
     return JSON.parse(result.data)
   }).catch( err => {
@@ -44,9 +44,10 @@ function getGameById(gameId, cb){
     data: `fields name,total_rating,summary;where id = ${gameId};`
   }
     
-  const get = urllib.request(baseUrl,settings,(err, data, res) => {
-      if(err) return cb(err)
-       const obj = JSON.parse(data)
-       cb(null,obj[0])
+  return urllib.request(baseUrl,settings).then(result => {
+    return JSON.parse(result.data)[0]
+  }).catch(err => {
+    throw err
   })
+  
 }
