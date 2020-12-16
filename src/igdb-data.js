@@ -31,7 +31,7 @@ function getGameByName(gameName){
   })
 }
 
-function getGameById(gameId, cb){
+function getGameById(gameId){
   //Pesquisar jogos pelo nome    
 
  const settings = {
