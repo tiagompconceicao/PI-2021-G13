@@ -31,101 +31,84 @@ module.exports = function(services){
         })
     }
 
-    function createGroup(req, rsp){
+    async function createGroup(req, rsp){
         //Criar grupo atribuindo-lhe um nome e descrição
 
         const group = { name: req.body.name, description: req.body.description }
 
-        services.createGroup(group.name, group.description, processCreateGroup )
+         await services.createGroup(group.name, group.description).then(id => {
+            sendGroupChangeSuccess(req, rsp, id, "created")
+         }).catch(err => {
+            handleError(req, rsp, err)
+         })
 
-
-        function processCreateGroup(err,id){
-            if(err){
-                //sendBadRequest status code 400
-                handleError(req, rsp, err)
-            } else {
-                sendGroupChangeSuccess(req, rsp, id, "created")
-            }
-        }
     }
 
-    function editGroup(req, rsp){
+    async function editGroup(req, rsp){
         //Editar grupo, alterando o seu nome e descrição
         const group = { name : req.body.name, description: req.body.description }
         group.id = req.params.groupId
 
-        services.editGroup(group, (err) => {
-            if(err){
-                handleError(req, rsp, err)
-            } else {
-                sendGroupChangeSuccess(req, rsp, group.id, "edited")
-            }
-        })
+        await services.editGroup(group).then(
+            sendGroupChangeSuccess(req, rsp, group.id, "edited")
+        ).catch(err => 
+            handleError(req, rsp, err)
+        )
     }
 
-    function deleteGroup(req, rsp){
+    async function deleteGroup(req, rsp){
         //Remover um grupo
         const groupId = req.params.groupId
-        services.deleteGroup(groupId,processDelete)
 
-        function processDelete(err) {
-            if(err) {
-                handleError(req, rsp, err)
-            }
+        await services.deleteGroup(groupId).then(
             sendGroupChangeSuccess(req, rsp, groupId, "deleted")
-          }
-
-    }
-
-    function getAllGroups(req,rsp){
-        //Listar todos os grupos
-        services.getAllGroups((err,groups) => rsp.json(groups))
-    }
-
-    function getGroupDetails(req, rsp){
-    //Listar todos os grupos
-    //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
-    const groupId = req.params.groupId
-
-    services.getGroupDetails(groupId, (err, group) => {
-        if(err){
+        ).catch(err => 
             handleError(req, rsp, err)
-        } else {
-            rsp.json(group)
-        }
-    })
+        )
     }
 
-    function addGameToGroup(req, rsp){
+    async function getAllGroups(req,rsp){
+        //Listar todos os grupos
+        await services.getAllGroups().then( groups =>
+            rsp.json(groups)
+        )
+        
+    }
+
+    async function getGroupDetails(req, rsp){
+    //Listar todos os grupos
+        //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
+        const groupId = req.params.groupId
+
+        await services.getGroupDetails(groupId).then(group => 
+            rsp.json(group)
+        ).catch(err => handleError(req, rsp, err)) 
+    
+    }
+
+    async function addGameToGroup(req, rsp){
         //Adicionar um jogo a um grupo
         const gameId = req.params.gameId
         const groupId = req.params.groupId
 
-        services.addGameToGroup(groupId, gameId, (err) => {
-            if(err){
-                handleError(req, rsp, err)
-            } else {
-                sendGameChangeSuccess(req, rsp, gameId, groupId, "added")
-            }
-        })
+        await services.addGameToGroup(groupId, gameId).then(
+            sendGameChangeSuccess(req, rsp, gameId, groupId, "added")
+        ).catch(err => handleError(req, rsp, err))
         
     }
         
-    function removeGameFromGroup(req, rsp){
+    async function removeGameFromGroup(req, rsp){
         //Remover um jogo de um grupo
         const gameId = req.params.gameId
         const groupId = req.params.groupId
-        services.removeGameFromGroup(groupId,gameId,processDelete)
 
-        function processDelete(err) {
-            if(err) {
-                handleError(req, rsp, err)
-            }
+        await services.removeGameFromGroup(groupId,gameId).then(
             sendGameChangeSuccess(req, rsp, gameId, groupId, "deleted")
-          }
+        ).catch(err => handleError(req, rsp, err))
+
     }
         
-    function getGamesFromGroupWithinRange(req, rsp){
+    async function getGamesFromGroupWithinRange(req, rsp){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
         //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
         //vêm ordenadas por ordem decrescente da votação média
@@ -133,13 +116,10 @@ module.exports = function(services){
         const min = req.params.min
         const max = req.params.max
 
-        services.getGamesFromGroupWithinRange(groupId, min, max, (err , games) => {
-            if(err){
-                handleError(req, rsp, err)
-            } else {
-                rsp.json(games)
-            }
-        })
+        await services.getGamesFromGroupWithinRange(groupId, min, max).then(games =>
+            rsp.json(games)
+        ).catch(err => handleError(req, rsp, err))
+        
     }
 
     function handleError(req, rsp, err){
