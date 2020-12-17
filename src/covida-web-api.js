@@ -1,5 +1,3 @@
-/* criar todas as funcionalidades  */
-
 
 module.exports = function(services){
     if(!services){
@@ -17,8 +15,6 @@ module.exports = function(services){
         removeGameFromGroup,
         getGamesFromGroupWithinRange
     }
-    //this functions will call a method from services which fulfills the request (req), 
-    //and prepares the response (res), for example with the status code 200 OK
 
     function getGameByName(req, rsp){
         //Pesquisar jogos pelo nome
@@ -78,7 +74,6 @@ module.exports = function(services){
     }
 
     function getGroupDetails(req, rsp){
-    //Listar todos os grupos
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
         const groupId = req.params.groupId
 
@@ -98,7 +93,6 @@ module.exports = function(services){
         ).catch(err => {
             handleError(req, rsp, err)
         })
-        
     }
         
     function removeGameFromGroup(req, rsp){
@@ -111,13 +105,10 @@ module.exports = function(services){
         ).catch(err => {
             handleError(req, rsp, err)
         })
-
     }
         
     function getGamesFromGroupWithinRange(req, rsp){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
-        //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
-        //vêm ordenadas por ordem decrescente da votação média
         const groupId = req.params.groupId
         const min = req.params.min
         const max = req.params.max
@@ -125,7 +116,6 @@ module.exports = function(services){
         services.getGamesFromGroupWithinRange(groupId, min, max).then(games => 
             rsp.json(games)
         ).catch(err => handleError(req, rsp, err))
-        
     }
 
     async function handleError(req, rsp, err){

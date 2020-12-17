@@ -22,7 +22,6 @@ module.exports = function(data,db) {
 
     async function getGameByName(name){
         //Pesquisar jogos pelo nome
-
         return data.getGameByName(name)
     }
 
@@ -56,7 +55,6 @@ module.exports = function(data,db) {
 
     async function getAllGroups(){
         //Listar todos os grupos
-
         return db.getAllGroups()
     }
         
@@ -110,8 +108,6 @@ module.exports = function(data,db) {
         
     async function getGamesFromGroupWithinRange(groupId, min, max){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
-        //(mínimo e máximo) entre 0 e 100, sendo estes valores parametrizáveis no pedido. Os jogos 
-        //vêm ordenadas por ordem decrescente da votação média
 
         if(min > max || min <= 0 || max >= 100){
             throw 'Bad input'
