@@ -50,8 +50,9 @@ module.exports = function(services){
         const group = { name : req.body.name, description: req.body.description }
         group.id = req.params.groupId
 
-        services.editGroup(group).then(
+        services.editGroup(group).then(() => {
             sendGroupChangeSuccess(req, rsp, group.id, "edited")
+        }
         ).catch(err => 
             handleError(req, rsp, err)
         )
@@ -61,8 +62,8 @@ module.exports = function(services){
         //Remover um grupo
         const groupId = req.params.groupId
 
-        services.deleteGroup(groupId).then(
-            sendGroupChangeSuccess(req, rsp, groupId, "deleted")
+        services.deleteGroup(groupId).then(() => {
+            sendGroupChangeSuccess(req, rsp, groupId, "deleted")}
         ).catch(err => 
             handleError(req, rsp, err)
         )
@@ -92,7 +93,7 @@ module.exports = function(services){
         const gameId = req.params.gameId
         const groupId = req.params.groupId
 
-        services.addGameToGroup(groupId, gameId).then(()=>{
+        services.addGameToGroup(groupId, gameId).then(() => {
             sendGameChangeSuccess(req, rsp, gameId, groupId, "added")}
         ).catch(err => {
             handleError(req, rsp, err)
@@ -105,9 +106,11 @@ module.exports = function(services){
         const gameId = req.params.gameId
         const groupId = req.params.groupId
 
-        services.removeGameFromGroup(groupId,gameId).then(
-            sendGameChangeSuccess(req, rsp, gameId, groupId, "deleted")
-        ).catch(err => handleError(req, rsp, err))
+        services.removeGameFromGroup(groupId,gameId).then(() => {
+            sendGameChangeSuccess(req, rsp, gameId, groupId, "deleted")}
+        ).catch(err => {
+            handleError(req, rsp, err)
+        })
 
     }
         
@@ -119,13 +122,13 @@ module.exports = function(services){
         const min = req.params.min
         const max = req.params.max
 
-        services.getGamesFromGroupWithinRange(groupId, min, max).then(games =>
+        services.getGamesFromGroupWithinRange(groupId, min, max).then(games => 
             rsp.json(games)
         ).catch(err => handleError(req, rsp, err))
         
     }
 
-    function handleError(req, rsp, err){
+    async function handleError(req, rsp, err){
         switch(err){
             case "Resource not found":
                 //status code 404

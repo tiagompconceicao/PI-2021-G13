@@ -12,7 +12,7 @@ module.exports = function(groups) {
         deleteGroup,
         getAllGroups,
         getGroupDetails,
-        getGameDetails,
+        verifyIfGameExistsInGroup,
         addGameToGroup,
         removeGameFromGroup,
         getGamesFromGroupWithinRange
@@ -57,7 +57,6 @@ module.exports = function(groups) {
 
         if(newGroups.length != groups.length) {
             groups = newGroups
-            return 
         } else {
             throw ('Resource not found')
         }
@@ -80,15 +79,13 @@ module.exports = function(groups) {
 
     }
 
-    async function getGameDetails(group, gameId){
+    async function verifyIfGameExistsInGroup(group, gameId){
         //Adicionar um jogo a um grupo
         const game = group.games.find(game => game.id == gameId)
 
         if(game){
-            return game
-        } else {
-            throw "Resource not found"
-        }
+            throw "Game already exists in this group"
+        } 
     }
 
     async function addGameToGroup(group, game){

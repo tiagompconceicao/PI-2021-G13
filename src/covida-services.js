@@ -47,8 +47,8 @@ module.exports = function(data,db) {
             throw 'Missing arguments'
         }
 
-        db.getGroupDetails(groupId).then(group => {
-            return db.deleteGroup(groupId)
+        return db.getGroupDetails(groupId).then(group => {
+            return db.deleteGroup(group.id)
         }).catch( err => {
             throw err
         }) 
@@ -77,26 +77,20 @@ module.exports = function(data,db) {
         }
 
         return db.getGroupDetails(groupId).then(group => {
-            return db.getGameDetails(group,gameId).then( game => {
-                console.log("Entrou no then,function addGameToGroup => getGameDetails")
-                //Smell bad... this throw goes to the getGameDetails catch
-                throw "Game already exists in this group"
-            }).catch(err => {
+            return db.verifyIfGameExistsInGroup(group,gameId).then(() => {
                 return data.getGameById(gameId).then(data => {
                     if(data == null) {
-                        console.log("Entrou no catch,function addGameToGroup => getGameById")
                         throw "Resource not found"
                     } else {
-                        console.log("----------------------")
                         return db.addGameToGroup(group, data)
                     }
                 }).catch(err => {
-                    console.log("Entrou no catch,function addGameToGroup => getGameDetails")
                     throw err
                 })
+            }).catch(err => {
+                throw err
             })
         }).catch(err => {
-            console.log("Entrou no catch,function addGameToGroup => getGroupDetails")
             throw err
         })
     }
@@ -123,7 +117,7 @@ module.exports = function(data,db) {
             throw 'Bad input'
         }
 
-        db.getGroupDetails(groupId).then( group => {
+        return db.getGroupDetails(groupId).then( group => {
             return db.getGamesFromGroupWithinRange(group, min, max)
         }).catch(err => {
             throw err
