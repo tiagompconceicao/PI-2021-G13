@@ -18,7 +18,7 @@ module.exports = function(groups) {
         getGamesFromGroupWithinRange
     }
      
-    function createGroup(groupName, groupDescription, cb){
+    async function createGroup(groupName, groupDescription){
         //Criar grupo atribuindo-lhe um nome e descrição
         
         let validId
@@ -36,72 +36,88 @@ module.exports = function(groups) {
         }
                 
         groups.push(group)
-        cb(null,validId)     
+
+        return validId   
     }
             
-    function editGroup(newGroup, cb){
+    async function editGroup(newGroup){
         //Editar grupo, alterando o seu nome e descrição
 
         const group = groups.find(group => group.id == newGroup.id)
         if(group) {
             group.name = newGroup.name
             group.description = newGroup.description
-            cb(null)
         } else {
-            cb('Resource not found')
+            throw 'Resource not found'
         }
     }
 
-    function deleteGroup(groupId,cb){
+    async function deleteGroup(groupId){
         let newGroups = groups.filter(group => group.id != groupId)
 
         if(newGroups.length != groups.length) {
             groups = newGroups
-            cb(null)
+            return 
         } else {
-            cb('Resource not found')
+            throw ('Resource not found')
         }
     }
 
-    function getAllGroups(cb){
+    async function getAllGroups(){
         //Listar todos os grupos
-        cb(null,groups)
+        return groups
     }
 
-    function getGroupDetails(groupId, cb){
+    async function getGroupDetails(groupId){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
 
         const group = groups.find(group => group.id == groupId)
-        group ? cb(null,group) : cb("Resource not found")
+        if(group){
+           return group 
+        } else {
+            throw "Resource not found"
+        }
 
     }
 
-    function getGameDetails(group, gameId, cb){
+    async function getGameDetails(group, gameId){
         //Adicionar um jogo a um grupo
         const game = group.games.find(game => game.id == gameId)
-        game ? cb(null,game) : cb("Resource not found")
+
+        if(game){
+            return game
+        } else {
+            throw "Resource not found"
+        }
     }
 
-    function addGameToGroup(group, game, cb){
+    async function addGameToGroup(group, game){
         //Adicionar um jogo a um grupo
-        group.games.push(game)
-        cb(null)
+        //group.games.push(game)
+        //Get Game
+        let groupGame = group.games.find(groupGame => groupGame.id == game.id)
+
+        if(groupGame){
+            throw ("Game already exists in this group")
+        } else {
+            group.games.push(game)
+        }
     }
         
-    function removeGameFromGroup(group, gameId, cb){
+    async function removeGameFromGroup(group, gameId){
         //Remover um jogo de um grupo
         
         let newGames = group.games.filter(game => game.id != gameId)
 
         if(newGames.length != group.games.length) {
             group.games = newGames
-            cb(null)
+
         } else {
-            cb('Resource not found')
+            throw 'Resource not found'
         }
     }
 
-    function getGamesFromGroupWithinRange(group, min, max, cb){
+    async function getGamesFromGroupWithinRange(group, min, max){
 
         let filteredGames = group.games.filter(game => game.total_rating > min && game.total_rating < max)
 
@@ -109,6 +125,6 @@ module.exports = function(groups) {
             return b.total_rating - a.total_rating;
           });
 
-        cb(null ,filteredGames)
+        return filteredGames
     }
 }

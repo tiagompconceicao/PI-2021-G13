@@ -92,9 +92,11 @@ module.exports = function(services){
         const gameId = req.params.gameId
         const groupId = req.params.groupId
 
-        services.addGameToGroup(groupId, gameId).then(
-            sendGameChangeSuccess(req, rsp, gameId, groupId, "added")
-        ).catch(err => handleError(req, rsp, err))
+        services.addGameToGroup(groupId, gameId).then(()=>{
+            sendGameChangeSuccess(req, rsp, gameId, groupId, "added")}
+        ).catch(err => {
+            handleError(req, rsp, err)
+        })
         
     }
         
@@ -141,15 +143,24 @@ module.exports = function(services){
     }
 
     function sendConflict(req, rsp, msg){
-        rsp.status(409).json({error:msg,uri:req.originalUrl})
+        rsp.status(409).json({
+            error:msg,
+            uri:req.originalUrl
+        })
     }
 
     function sendNotFound(req, rsp, msg) {
-        rsp.status(404).json({error:msg,uri:req.originalUrl})
+        rsp.status(404).json({
+            error:msg,
+            uri:req.originalUrl
+        })
     }
 
     function sendBadRequest(req, rsp, msg) {
-        rsp.status(400).json({error:msg,uri:req.originalUrl})
+        rsp.status(400).json({
+            error:msg,
+            uri:req.originalUrl
+        })
     } 
 
 
