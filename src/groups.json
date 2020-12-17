@@ -1,3 +1,14 @@
 [
-
+    {
+        "name" : "Sports",
+        "id" : 1,
+        "description" : "grupo do grupo 13",
+        "games" : [
+            {
+                "name" : "Doom",
+                "id" : 7351,
+                "total_rating" : 70
+            }
+        ]
+    }
 ]  

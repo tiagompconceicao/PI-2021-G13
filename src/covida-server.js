@@ -28,7 +28,7 @@ app.delete(`/covida/groups/:groupId/games/:gameId`, webapi.removeGameFromGroup)
 app.get(`/covida/groups/:groupId/:min/:max`, webapi.getGamesFromGroupWithinRange)    
 
 app.listen(PORT, () => {
-    console.log(`Tasks app listening at http://localhost:${PORT}`)
+    console.log(`Covida app listening at http://localhost:${PORT}`)
 })
 
 function apiCheck(req, rsp) {
