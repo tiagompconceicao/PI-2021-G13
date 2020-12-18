@@ -129,6 +129,7 @@ module.exports = function(services){
             case "Game already exists in this group":
                 //409 Conflict
                 sendConflict(req, rsp, err)
+                break
             case "Bad input":
             case "Missing arguments":
                 //Bad request status code 400
