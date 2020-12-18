@@ -6,9 +6,8 @@ const PORT = 8000
 
 const express = require('express')
 
-const db = require('./groups')
 const igdbDb = require('./igdb-data')
-const covidaDb = require('./covida-db')(db)
+const covidaDb = require('./covida-db-elastic')()
 const covidaServices= require('./covida-services')(igdbDb,covidaDb)
 const webapi  = require('./covida-web-api')(covidaServices)
 

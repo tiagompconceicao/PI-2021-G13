@@ -26,6 +26,7 @@ module.exports = function(data,db) {
     }
 
     async function createGroup(groupName, description){
+        //TODO: Verificar se não é passado espaços em branco
         if(!groupName || !description){
             throw 'Missing arguments'
         } else {
@@ -33,12 +34,17 @@ module.exports = function(data,db) {
         }
     }
         
-    async function editGroup(group){
+    async function editGroup(newGroup){
         //Editar grupo, alterando o seu nome e descrição
-        if(!group.description || !group.name){
+        if(!newGroup.description || !newGroup.name){
             throw 'Missing arguments'
         }
-        return db.editGroup(group)
+        return db.getGroupDetails(newGroup.id).then(group => {
+            return db.editGroup(newGroup)
+        }).catch( err => {
+            throw err
+        }) 
+        
     }
 
     async function deleteGroup(groupId){

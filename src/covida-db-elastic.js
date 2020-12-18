@@ -1,8 +1,8 @@
 /** Nossa base de dados, trata de tudo o que for preciso guardar na base de dados */
 
 const urllib = require("urllib")
-const baseUrl = "https://localhost:9200/groups/"
-let maxID = 0
+const baseUrl = "http://localhost:9200/groups/"
+let maxId
 
 const Uri = {
     CREATE_GROUP: `${baseUrl}group/`,
@@ -10,11 +10,10 @@ const Uri = {
     GET_ALL_GROUPS: `${baseUrl}_search`
 }
 
-module.exports = function(groups) {
-    if(!groups){
-        groups = require('./initialGroups')
-
-    }
+module.exports = function() {
+    loadMaxId().catch((err) => {
+        maxId = 0
+    })
 
     return {
         createGroup,
@@ -27,12 +26,29 @@ module.exports = function(groups) {
         removeGameFromGroup,
         getGamesFromGroupWithinRange
     }
+
+    async function loadMaxId(){
+        //Not correct , must get highest id and not the counter of ids
+        const settings = {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        return urllib.request(Uri.GET_ALL_GROUPS,settings).then(result => {
+            //result: {data: buffer, res: response object}
+            maxId = JSON.parse(result.data).hits.total.value
+        }).catch( err => {
+            throw err
+        })
+    }
      
     async function createGroup(groupName, groupDescription){
         //Criar grupo atribuindo-lhe um nome e descrição
- 
+
         let group = {
-            id: maxId++,
+            id: ++maxId,
             name: groupName,
             description: groupDescription, 
             games: []
@@ -43,17 +59,16 @@ module.exports = function(groups) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(group)
+            data: JSON.stringify(group)
         }
 
-        return urllib.request(Uri.CREATE_GROUP + maxId,settings).then(result => {
-            //result: {data: buffer, res: response object}
-              return JSON.parse(result.data)
-            }).catch( err => {
-              throw err
-            })
 
-        //return maxId   
+        return urllib.request(Uri.CREATE_GROUP + group.id,settings).then(result => {
+            //result: {data: buffer, res: response object}
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err
+        })  
     }
             
     async function editGroup(newGroup){
@@ -64,15 +79,15 @@ module.exports = function(groups) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newGroup)
+            data: JSON.stringify(newGroup)
         }
 
         return urllib.request(Uri.CREATE_GROUP + newGroup.id,settings).then(result => {
             //result: {data: buffer, res: response object}
-              return JSON.parse(result.data)
-            }).catch( err => {
-              throw err
-            })
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err
+        })
     }
 
     async function deleteGroup(groupId){
@@ -84,6 +99,8 @@ module.exports = function(groups) {
             throw ('Resource not found')
         }*/
 
+        //Not done...
+
         const settings = {
             method: "DELETE",
             headers: {
@@ -94,14 +111,15 @@ module.exports = function(groups) {
 
         return urllib.request(Uri.GET_GROUP + groupId,settings).then(result => {
             //result: {data: buffer, res: response object}
-              return JSON.parse(result.data)
-            }).catch( err => {
-              throw err
-            })
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err
+        })
     }
 
     async function getAllGroups(){
         //Listar todos os grupos
+        //Not done...
 
         const settings = {
             method: "GET",
@@ -112,10 +130,10 @@ module.exports = function(groups) {
 
         return urllib.request(Uri.GET_ALL_GROUPS,settings).then(result => {
             //result: {data: buffer, res: response object}
-              return JSON.parse(result.data)
-            }).catch( err => {
-              throw err
-            })
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err
+        })
             
     }
 
@@ -128,17 +146,19 @@ module.exports = function(groups) {
             }
         }
 
-        return urllib.request(Uri.GET_GROUP + groupId,settings).then(result => {
+        return urllib.request(Uri.GET_GROUP + groupId + "/_source",settings).then(result => {
             //result: {data: buffer, res: response object}
-              return JSON.parse(result.data)
-            }).catch( err => {
-              throw err
-            })
+            if(JSON.parse(result.data).error) throw "Resource not found"
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err
+        })
 
     }
 
     async function verifyIfGameExistsInGroup(group, gameId){
         //Adicionar um jogo a um grupo
+        //Not done...
         const game = group.games.find(game => game.id == gameId)
 
         if(game){
@@ -150,6 +170,8 @@ module.exports = function(groups) {
         //Adicionar um jogo a um grupo
         //group.games.push(game)
         //Get Game
+
+        //Not done...
         let groupGame = group.games.find(groupGame => groupGame.id == game.id)
 
         if(groupGame){
@@ -162,6 +184,7 @@ module.exports = function(groups) {
     async function removeGameFromGroup(group, gameId){
         //Remover um jogo de um grupo
         
+        //Not done...
         let newGames = group.games.filter(game => game.id != gameId)
 
         if(newGames.length != group.games.length) {
@@ -173,7 +196,7 @@ module.exports = function(groups) {
     }
 
     async function getGamesFromGroupWithinRange(group, min, max){
-
+        //Not done...
         let filteredGames = group.games.filter(game => game.total_rating > min && game.total_rating < max)
 
         filteredGames.sort(function(a, b) {

@@ -1,4 +1,4 @@
-/** Nossa base de dados, trata de tudo o que for preciso guardar na base de dados */
+/* Nossa base de dados, trata de tudo o que for preciso guardar na base de dados */
 
 module.exports = function(groups) {
     if(!groups){

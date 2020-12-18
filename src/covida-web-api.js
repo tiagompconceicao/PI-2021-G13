@@ -33,8 +33,9 @@ module.exports = function(services){
 
         const group = { name: req.body.name, description: req.body.description }
 
-        services.createGroup(group.name, group.description).then(id => {
-            sendGroupChangeSuccess(req, rsp, id, "created")
+        services.createGroup(group.name, group.description).then(result => {
+            console.log(result)
+            sendGroupChangeSuccess(req, rsp, result._id, "created")
         }).catch(err => {
             handleError(req, rsp, err)
         })
@@ -43,8 +44,7 @@ module.exports = function(services){
 
     function editGroup(req, rsp){
         //Editar grupo, alterando o seu nome e descrição
-        const group = { name : req.body.name, description: req.body.description }
-        group.id = req.params.groupId
+        const group = { id : req.params.groupId, name : req.body.name, description: req.body.description }
 
         services.editGroup(group).then(() => {
             sendGroupChangeSuccess(req, rsp, group.id, "edited")
@@ -67,9 +67,9 @@ module.exports = function(services){
 
     function getAllGroups(req,rsp){
         //Listar todos os grupos
-        services.getAllGroups().then( groups =>
+        services.getAllGroups().then( groups => {
             rsp.json(groups)
-        )
+        })
         
     }
 
@@ -158,14 +158,14 @@ module.exports = function(services){
 
 
 
-    function sendGroupChangeSuccess(req, rsp, id, changeType, urlSuffix = "") {
+    async function sendGroupChangeSuccess(req, rsp, id, changeType, urlSuffix = "") {
         rsp.json({
           status : `Group with id ${id} ${changeType}`,
           uri: req.originalUrl + urlSuffix
         })
     }
 
-    function sendGameChangeSuccess(req, rsp, gameId, groupId, changeType) {
+    async function sendGameChangeSuccess(req, rsp, gameId, groupId, changeType) {
         rsp.json({
           status : `Game with id ${gameId} ${changeType} in group with id ${groupId}`,
           uri: req.originalUrl
