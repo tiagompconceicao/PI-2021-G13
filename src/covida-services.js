@@ -36,9 +36,10 @@ module.exports = function(data,db) {
         
     async function editGroup(newGroup){
         //Editar grupo, alterando o seu nome e descrição
-        if(!newGroup.description || !newGroup.name){
+        if(!newGroup.description && !newGroup.name){
             throw 'Missing arguments'
         }
+
         return db.getGroupDetails(newGroup.id).then(group => {
             return db.editGroup(newGroup)
         }).catch( err => {

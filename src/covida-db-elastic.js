@@ -73,6 +73,7 @@ module.exports = function() {
             
     async function editGroup(newGroup){
         //Editar grupo, alterando o seu nome e descrição
+        //Not done...
                 
         const settings = {
             method: "PUT",
@@ -82,7 +83,7 @@ module.exports = function() {
             data: JSON.stringify(newGroup)
         }
 
-        return urllib.request(Uri.CREATE_GROUP + newGroup.id,settings).then(result => {
+        return urllib.request(Uri.CREATE_GROUP + newGroup.id+"/_update_by_query",settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
@@ -91,22 +92,12 @@ module.exports = function() {
     }
 
     async function deleteGroup(groupId){
-        /*let newGroups = groups.filter(group => group.id != groupId)
-
-        if(newGroups.length != groups.length) {
-            groups = newGroups
-        } else {
-            throw ('Resource not found')
-        }*/
-
-        //Not done...
 
         const settings = {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(group)
+            }
         }
 
         return urllib.request(Uri.GET_GROUP + groupId,settings).then(result => {
@@ -119,7 +110,6 @@ module.exports = function() {
 
     async function getAllGroups(){
         //Listar todos os grupos
-        //Not done...
 
         const settings = {
             method: "GET",
@@ -130,7 +120,9 @@ module.exports = function() {
 
         return urllib.request(Uri.GET_ALL_GROUPS,settings).then(result => {
             //result: {data: buffer, res: response object}
-            return JSON.parse(result.data)
+            let groups = JSON.parse(result.data).hits.hits
+            groups = groups.map(group => group = group._source)
+            return groups
         }).catch( err => {
             throw err
         })

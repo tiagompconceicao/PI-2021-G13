@@ -46,8 +46,9 @@ module.exports = function(services){
         //Editar grupo, alterando o seu nome e descrição
         const group = { id : req.params.groupId, name : req.body.name, description: req.body.description }
 
-        services.editGroup(group).then(() => {
-            sendGroupChangeSuccess(req, rsp, group.id, "edited")
+        services.editGroup(group).then((result) => {
+            console.log(result)
+            sendGroupChangeSuccess(req, rsp, result._id, "edited")
         }
         ).catch(err => 
             handleError(req, rsp, err)
@@ -58,8 +59,9 @@ module.exports = function(services){
         //Remover um grupo
         const groupId = req.params.groupId
 
-        services.deleteGroup(groupId).then(() => {
-            sendGroupChangeSuccess(req, rsp, groupId, "deleted")}
+        services.deleteGroup(groupId).then((result) => {
+            console.log(result)
+            sendGroupChangeSuccess(req, rsp, result._id, "deleted")}
         ).catch(err => 
             handleError(req, rsp, err)
         )
