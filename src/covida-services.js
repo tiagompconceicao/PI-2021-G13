@@ -29,6 +29,8 @@ module.exports = function(data,db) {
         //TODO: Verificar se não é passado espaços em branco
         if(!groupName || !description){
             throw 'Missing arguments'
+        } else if (groupName.trim().length <= 0 || description.trim().length <= 0 ){
+            throw 'Bad input'
         } else {
             return db.createGroup(groupName, description) 
         }
