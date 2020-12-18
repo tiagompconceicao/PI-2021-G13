@@ -73,17 +73,16 @@ module.exports = function() {
             
     async function editGroup(newGroup){
         //Editar grupo, alterando o seu nome e descrição
-        //Not done...
                 
         const settings = {
-            method: "PUT",
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: JSON.stringify(newGroup)
+            data: JSON.stringify({"doc" : newGroup})
         }
 
-        return urllib.request(Uri.CREATE_GROUP + newGroup.id+"/_update_by_query",settings).then(result => {
+        return urllib.request(Uri.CREATE_GROUP + newGroup.id+"/_update",settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
