@@ -45,8 +45,8 @@ module.exports = function(groups) {
 
         const group = groups.find(group => group.id == newGroup.id)
         if(group) {
-            group.name = newGroup.name
-            group.description = newGroup.description
+            if(newGroup.name) group.name = newGroup.name
+            if(newGroup.description) group.description = newGroup.description
         } else {
             throw 'Resource not found'
         }

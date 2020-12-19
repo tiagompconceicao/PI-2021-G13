@@ -39,15 +39,6 @@ describe('Add groups', () => {
         'uri': `/covida/groups`,
       })
   })
-  test('Add an existing group', () => {
-    return frisby.post(`${serverBase}groups`,{body :{name:"Sports",description:"Group of sports"}})
-      .expect('status', 409)
-      .expect('header', 'Content-Type', 'application/json; charset=utf-8')
-      .expect('jsonTypes', {
-        'status': 'Group already exists',
-        'uri': `/covida/groups`,
-      })
-  })
 })
 
 
@@ -57,7 +48,7 @@ describe('Edit groups', () => {
       .expect('status', 200)
       .expect('header', 'Content-Type', 'application/json; charset=utf-8')
       .expect('jsonTypes', {
-        'status': 'Group with id 1 edited',
+        'status': 'Group with id 1 updated',
         'uri': `/covida/groups/1`,
       })
   })
