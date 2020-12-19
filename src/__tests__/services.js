@@ -14,6 +14,7 @@ function getInitGroup(){ return  [{
 }
 
 const igdbdata = require ('./../igdb-data')
+const groupsElasticFunction = require('./../covida-db-elastic')
 const groupsDbFunction = require('./../covida-db')
 const groupsServicesFunction = require('./../covida-services')
 
@@ -30,14 +31,15 @@ describe('Game creation', () => {
   test('Add an existing game', function (done) {
     const game = 7351
   
-    groupsServices.addGameToGroup(groupId,game, (err) => {
-      expect(err).toBeTruthy()
-      groupsServices.getGroupDetails(groupId,(err,group) => { 
+    groupsServices.addGameToGroup(groupId,game).then(() => {
+      groupsServices.getGroupDetails(groupId).then((group)=>{
         expect(group.games.length).toBe(1)
         done()
       })
     })
   })
+
+
 
   test('Add a non existing game', function (done) {
     const game = 
@@ -84,10 +86,9 @@ describe('Group Creation', () => {
   })
   
   test('Create an existing Group', function (done) {
-    groupsServices.createGroup("Sports","ola", (err) => { 
-      expect(err).toBeTruthy()
-      groupsServices.getAllGroups((err,groups) => { 
-        expect(groups.length).toBe(1)
+    groupsServices.createGroup("Sports","Sports description").then(()=>{
+      groupsServices.getAllGroups().then((groups) =>{
+        expect(groups.length).toBe(2)
         done()
       })
     })
@@ -95,30 +96,55 @@ describe('Group Creation', () => {
 
 
   test('Create a non existing group', function (done) {
-      groupsServices.createGroup("Corridas","Description for group Corridas" , (err) => { 
-        expect(err).toBeFalsy()
-        groupsServices.getAllGroups((err,groups) => { 
-          expect(groups.length).toBe(2)
-          done()
-        })
+    groupsServices.createGroup("Races","Races description").then(()=>{
+      groupsServices.getAllGroups().then((groups) =>{
+        expect(groups.length).toBe(2)
+        done()
       })
     })
-  
-    test('Create the same group twice', function (done) {
-      groupsServices.createGroup("xpto","Description for group Corridas" , (err, data) => { 
-        expect(err).toBeFalsy()
-        groupsServices.getAllGroups((err,groups) => { 
-          expect(groups.length).toBe(2)
-          groupsServices.createGroup("xpto","Description for group Corridas" , (err, data) => { 
-            expect(err).toBeTruthy()
-            groupsServices.getAllGroups((err,groups) => { 
-              expect(groups.length).toBe(2)
-              done()
-            })
-          })
-        })
+  })
+
+  test('Creating a group without name', function (done) {
+    groupsServices.createGroup(null,"Races description").catch((err)=>{
+      expect(err).toBeTruthy()
+      groupsServices.getAllGroups().then((groups) =>{
+        expect(groups.length).toBe(1)
+        done()
       })
-    }) 
+    })
+  })
+
+  test('Creating a group without description', function (done) {
+    groupsServices.createGroup("Races",null).catch((err)=>{
+      expect(err).toBeTruthy()
+      groupsServices.getAllGroups().then((groups) =>{
+        expect(groups.length).toBe(1)
+        done()
+      })
+    })
+  })
+
+  test('Creating a group with blank name', function (done) {
+    groupsServices.createGroup("    ","Races description").catch((err)=>{
+      expect(err).toBeTruthy()
+      groupsServices.getAllGroups().then((groups) =>{
+        expect(groups.length).toBe(1)
+        done()
+      })
+    })
+  })
+
+  test('Creating a group with blank description', function (done) {
+    groupsServices.createGroup("Races","    ").catch((err)=>{
+      expect(err).toBeTruthy()
+      groupsServices.getAllGroups().then((groups) =>{
+        expect(groups.length).toBe(1)
+        done()
+      })
+    })
+  })
+  
+    
 })
 
 // TEST FOR EDITING GROUPS
