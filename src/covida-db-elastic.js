@@ -5,8 +5,7 @@ const baseUrl = "http://localhost:9200/groups/"
 let validId
 
 const Uri = {
-    CREATE_GROUP: `${baseUrl}group/`,
-    GET_GROUP: `${baseUrl}group/`,
+    GROUP: `${baseUrl}group/`,
     GET_ALL_GROUPS: `${baseUrl}_search`,
     UPDATE: `/_update`
 }
@@ -57,7 +56,7 @@ module.exports = function() {
         }
 
 
-        return urllib.request(Uri.CREATE_GROUP + group.id,settings).then(result => {
+        return urllib.request(Uri.GROUP + group.id,settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
@@ -76,7 +75,7 @@ module.exports = function() {
             data: JSON.stringify({"doc" : newGroup})
         }
 
-        return urllib.request(Uri.CREATE_GROUP + newGroup.id+"/_update",settings).then(result => {
+        return urllib.request(Uri.GROUP + newGroup.id + Uri.UPDATE,settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
@@ -94,7 +93,7 @@ module.exports = function() {
             }
         }
 
-        return urllib.request(Uri.GET_GROUP + groupId,settings).then(result => {
+        return urllib.request(Uri.GROUP + groupId,settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
@@ -132,7 +131,7 @@ module.exports = function() {
             }
         }
 
-        return urllib.request(Uri.GET_GROUP + groupId + "/_source",settings).then(result => {
+        return urllib.request(Uri.GROUP + groupId + "/_source",settings).then(result => {
             //result: {data: buffer, res: response object}
             if(JSON.parse(result.data).error) throw "Resource not found"
             return JSON.parse(result.data)
@@ -169,7 +168,7 @@ module.exports = function() {
         }
 
 
-        return urllib.request(Uri.CREATE_GROUP + group.id + Uri.UPDATE,settings).then(result => {
+        return urllib.request(Uri.GROUP + group.id + Uri.UPDATE,settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
@@ -179,16 +178,32 @@ module.exports = function() {
         
     async function removeGameFromGroup(group, gameId){
         //Remover um jogo de um grupo
+        const game = group.games.find(game => game.id == gameId)
+        if(!game) throw "Resource not found"
         
-        //Not done...
-        let newGames = group.games.filter(game => game.id != gameId)
+        game.id = Number(game.id)
 
-        if(newGames.length != group.games.length) {
-            group.games = newGames
-
-        } else {
-            throw 'Resource not found'
+        const settings = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                "script": {
+                    "inline":"ctx._source.games.remove(ctx._source.games.indexOf(params.game))",
+                    "params": {
+                            "game" : game
+                        }
+                    }   
+                })
         }
+
+        return urllib.request(Uri.GROUP + group.id + Uri.UPDATE,settings).then(result => {
+            //result: {data: buffer, res: response object}
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err
+        }) 
     }
 
     async function getGamesFromGroupWithinRange(group, min, max){

@@ -34,8 +34,7 @@ module.exports = function(services){
         const group = { name: req.body.name, description: req.body.description }
 
         services.createGroup(group.name, group.description).then(result => {
-            console.log(result)
-            sendGroupChangeSuccess(req, rsp, result._id, "created")
+            sendGroupChangeSuccess(req, rsp, result._id, result.result)
         }).catch(err => {
             handleError(req, rsp, err)
         })
@@ -47,8 +46,7 @@ module.exports = function(services){
         const group = { id : req.params.groupId, name : req.body.name, description: req.body.description }
 
         services.editGroup(group).then((result) => {
-            console.log(result)
-            sendGroupChangeSuccess(req, rsp, result._id, "edited")
+            sendGroupChangeSuccess(req, rsp, result._id, result.result)
         }
         ).catch(err => 
             handleError(req, rsp, err)
@@ -60,8 +58,7 @@ module.exports = function(services){
         const groupId = req.params.groupId
 
         services.deleteGroup(groupId).then((result) => {
-            console.log(result)
-            sendGroupChangeSuccess(req, rsp, result._id, "deleted")}
+            sendGroupChangeSuccess(req, rsp, result._id, result.result)}
         ).catch(err => 
             handleError(req, rsp, err)
         )
