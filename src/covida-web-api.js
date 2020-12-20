@@ -66,8 +66,10 @@ module.exports = function(services){
 
     function getAllGroups(req,rsp){
         //Listar todos os grupos
-        services.getAllGroups().then( groups => {
+        services.getAllGroups().then(groups => {
             rsp.json(groups)
+        }).catch((err) => {
+            handleError(req, rsp, err)
         })
         
     }
@@ -78,7 +80,9 @@ module.exports = function(services){
 
         services.getGroupDetails(groupId).then(group => 
             rsp.json(group)
-        ).catch(err => handleError(req, rsp, err)) 
+        ).catch(err => {
+            handleError(req, rsp, err)
+        }) 
     
     }
 
@@ -132,7 +136,17 @@ module.exports = function(services){
                 //Bad request status code 400
                 sendBadRequest(req, rsp, err)
                 break
+            case "ECONNREFUSED":
+                sendBadGateway(req, rsp, "Bad Gateway")
+                break
         }
+    }
+
+    function sendBadGateway(req, rsp, msg){
+        rsp.status(502).json({
+            error:msg,
+            uri:req.originalUrl
+        })
     }
 
     function sendConflict(req, rsp, msg){

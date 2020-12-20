@@ -60,7 +60,7 @@ module.exports = function() {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
-            throw err
+            throw err.code
         })  
     }
             
@@ -79,7 +79,7 @@ module.exports = function() {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
-            throw err
+            throw err.code
         })
     }
 
@@ -97,7 +97,7 @@ module.exports = function() {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
-            throw err
+            throw err.code
         })
     }
 
@@ -117,7 +117,7 @@ module.exports = function() {
             groups = groups.map(group => group = group._source)
             return groups
         }).catch( err => {
-            throw err
+            throw err.code
         })
             
     }
@@ -136,7 +136,7 @@ module.exports = function() {
             if(JSON.parse(result.data).error) throw "Resource not found"
             return JSON.parse(result.data)
         }).catch( err => {
-            throw err
+            throw err.code
         })
     }
 
@@ -172,7 +172,7 @@ module.exports = function() {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
-            throw err
+            throw err.code
         }) 
     }
         
@@ -202,7 +202,7 @@ module.exports = function() {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
-            throw err
+            throw err.code
         }) 
     }
 
