@@ -74,6 +74,9 @@ curl http://localhost:8000/covida/groups
         ]
       }
     ```
+
+  - Errors:
+    - 502 (see Common Error Handling section)
 ---
 
 ## Obtain a specific group
@@ -152,7 +155,7 @@ curl http://localhost:8000/covida/groups     \
       }
     ```
     - Errors:
-      - 400, 409 and 502 (see Common Error Handling section)
+      - 400 and 502 (see Common Error Handling section)
 ---
 
 ## Edit a group
@@ -197,7 +200,7 @@ curl http://localhost:8000/covida/groups/2      \
     ```
 
   - Errors:
-    - 400, 404, 409 and 502 (see Common Error Handling section)
+    - 400, 404 and 502 (see Common Error Handling section)
   
 ---
 ## Add a game to a group
@@ -348,8 +351,7 @@ Every time the request contains a URI for a resource not managed by the covida, 
 ### 409 - Conflict
 
 Indicates that the request could not be processed because of conflict in the current state of the resource.
-This error normally occurs when the user tries to create an existing group or adding a game to a group that are already
-added.
+This error normally occurs when the user tries to add a game to a group that is already added.
 
 - Body:
 
