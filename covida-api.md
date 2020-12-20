@@ -108,7 +108,7 @@ curl http://localhost:8000/covida/groups/1
     ```
 
   - Errors:
-    - 404 (see Common Error Handling section)
+    - 404, 502 (see Common Error Handling section)
 ---
 
 ## Create a group
@@ -152,7 +152,7 @@ curl http://localhost:8000/covida/groups     \
       }
     ```
     - Errors:
-      - 400 and 409 (see Common Error Handling section)
+      - 400, 409 and 502 (see Common Error Handling section)
 ---
 
 ## Edit a group
@@ -197,7 +197,7 @@ curl http://localhost:8000/covida/groups/2      \
     ```
 
   - Errors:
-    - 400, 404 and 409 (see Common Error Handling section)
+    - 400, 404, 409 and 502 (see Common Error Handling section)
   
 ---
 ## Add a game to a group
@@ -232,7 +232,7 @@ curl http://localhost:8000/covida/groups/2/games/250     \
     ```
 
   - Errors:
-    - 400, 404 and 409 (see Common Error Handling section)
+    - 400, 404, 409 and 502 (see Common Error Handling section)
   
 ---
 ## Remove a game from a group
@@ -266,7 +266,7 @@ curl http://localhost:8000/covida/groups/2/games/250      \
     ```
 
   - Errors:
-    - 400 and 404 (see Common Error Handling section)
+    - 400, 404 and 502 (see Common Error Handling section)
   
 ---
 ## Obtain the games that have a total_rating between two values of a group 
@@ -309,7 +309,7 @@ curl http://localhost:8000/covida/groups/70/90
     ```
 
   - Errors:
-    - 404 (see Common Error Handling section)
+    - 404 and 502 (see Common Error Handling section)
 
 ---
 
@@ -321,13 +321,14 @@ Every error response has an `application/json` body with the content described f
 
 ### 400 - Bad request
 
-Every time the request contains a URI with and invalid QueryString or a Body with invalid Json content for that specific request, the response has a 400 status code with the following sample body:
+Every time the request contains a URI with and invalid QueryString or a Body with invalid Json content for that specific request.
 
 - Body:
 
   ```json
       {
-        "error": "The respective error message"
+        "error": "The respective error message",
+        "uri" : "The respective uri of the request"
       }
   ```
 
@@ -340,17 +341,34 @@ Every time the request contains a URI for a resource not managed by the covida, 
   ```json
       {
         "error": "Resource not found",
+        "uri" : "The respective uri of the request"
       }
+  ```
 
 ### 409 - Conflict
 
 Indicates that the request could not be processed because of conflict in the current state of the resource.
 This error normally occurs when the user tries to create an existing group or adding a game to a group that are already
-added
+added.
 
 - Body:
 
   ```json
       {
         "error": "Resource already exists",
+        "uri" : "The respective uri of the request"
       }
+  ```
+
+  ### 502 - Bad Gateway
+
+Indicates that the server received an invalid response from the upstream server, this can happen, for example, when is made a request to the elastic-search data base and is down.
+
+- Body:
+
+  ```json
+      {
+        "error": "Bad Gateway",
+        "uri" : "The respective uri of the request"
+      }
+  ```
