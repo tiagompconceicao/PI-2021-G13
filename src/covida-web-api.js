@@ -1,3 +1,4 @@
+const covidaServices = require("./covida-services")
 
 module.exports = function(services){
     if(!services){
@@ -5,6 +6,7 @@ module.exports = function(services){
     }
 
     return {
+        
         getGameByName,
         createGroup,
         editGroup,
@@ -13,7 +15,13 @@ module.exports = function(services){
         getGroupDetails,
         addGameToGroup,
         removeGameFromGroup,
-        getGamesFromGroupWithinRange
+        getGamesFromGroupWithinRange,
+        validateLogin,
+        verifyAuthenticated,
+        getSessionState,
+        logout,
+        createUser,
+        deleteUser
     }
 
     function getGameByName(req, rsp){
@@ -28,6 +36,8 @@ module.exports = function(services){
         })
     }
 
+    //TODO
+    //quando o grupo é criado, ou modificado de alguma forma, este tem de estar associado a um user, teremos de criar essa dependencia
     function createGroup(req, rsp){
         //Criar grupo atribuindo-lhe um nome e descrição
 
@@ -185,4 +195,81 @@ module.exports = function(services){
           uri: req.originalUrl
         })
     }
+
+
+    function verifyAuthenticated(req, rsp, next) {
+        if (req.isAuthenticated())
+          return next()
+        //TODO 
+        //error not handled with these
+        return rsp.status(401).send(responseMapper.Unauthorized)
+      }
+    
+    
+      function validateLogin(req, rsp) {
+        if (!req.user || !req.user.username) {
+          return covidaServices.validateLogin(req.body.username, req.body.password)
+            .then((isValid) => {
+              if (isValid) {
+                req.login({ username: req.body.username }, (err => {
+                  if (err) {
+                    //TODO 
+                    //error not handled with these
+                    throw responseMapper.Unauthorized
+                  }
+                  //TODO 
+                  //processResponse is handled in another way
+                  return processResponse(null, { status: "Authenticated" }, rsp)
+                }
+                ))
+              } else {
+                //TODO 
+                //error not handled with these
+                throw responseMapper.Unauthorized
+              }
+            })
+            //TODO 
+            //processResponse is handled in another way
+            .catch(error => processResponse(error, null, rsp))
+        }
+        //TODO 
+        //processResponse is handled in another way
+        return processResponse(responseMapper.Forbidden, null, rsp)
+      }
+    
+      function getSessionState(req,rsp){
+        //TODO 
+        //processResponse is handled in another way
+        processResponse(null,{status : req.isAuthenticated()},rsp,200)
+      }
+    
+      function logout(req, rsp) {
+        req.logout()
+        //TODO 
+        //processResponse is handled in another way
+        return processResponse(null, { status: "Logout" }, rsp)
+      }
+    
+      function createUser(req, rsp) {
+        covidaServices.createUser(req.body.username, req.body.password)
+            //TODO 
+            //processResponse is handled in another way
+          .then(value => processResponse(null, value, rsp, 201))
+            //TODO 
+            //processResponse is handled in another way
+          .catch(error => processResponse(error, null, rsp))
+      }
+    
+      function deleteUser(req, rsp) {
+        ciborgService.deleteUser(req.body.username, req.body.password)
+          .then(value => {
+            if (req.user && req.user.username == req.body.username) req.logout()
+            //TODO 
+            //processResponse is handled in another way
+            return processResponse(null, value, rsp)
+          })
+          //TODO 
+          //processResponse is handled in another way
+          .catch(error => processResponse(error, null, rsp))
+      }
 }

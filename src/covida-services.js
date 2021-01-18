@@ -1,3 +1,4 @@
+const covidaDb = require("./covida-db")
 
 
 module.exports = function(data,db) {
@@ -17,7 +18,12 @@ module.exports = function(data,db) {
         getGroupDetails,
         addGameToGroup,
         removeGameFromGroup,
-        getGamesFromGroupWithinRange
+        getGamesFromGroupWithinRange,
+        getUser,
+        validateLogin,
+        checkIfGroupBelongsToUser,
+        createUser,
+        deleteUser,
     }
 
     async function getGameByName(name){
@@ -25,6 +31,8 @@ module.exports = function(data,db) {
         return data.getGameByName(name)
     }
 
+    //TODO
+    //quando o grupo é criado, ou modificado de alguma forma, este tem de estar associado a um user, teremos de criar essa dependencia
     async function createGroup(groupName, description){
         //TODO: Verificar se não é passado espaços em branco
         if(!groupName || !description){
@@ -128,4 +136,62 @@ module.exports = function(data,db) {
             throw err
         })
     }
+
+
+
+  function getUser(username){
+    return covidaDb.getUser(username)
+  }
+
+  function validateLogin(username, password) {
+    return covidaDb.validateLogin(username, password)
+  }
+
+  function checkIfGroupBelongsToUser(username, groupId) {
+    return covidaDb.getUser(username)
+      .then(user => {
+        if (user.groups.find((id) => id == groupId)) {
+          return true
+        }
+        //TODO
+        //error handling not done with these
+        throw responseMapper.NoSuchResource("Group")
+      })
+  }
+
+  function createUser(username, password) {
+      //TODO 
+      //Responses not handled with these
+    return responseMapper
+      .validateParameter(username, (name) => name, "username")
+      .then(() => responseMapper.validateParameter(password, (password) => password, "password"))
+      .then(() => covidaDb.userExists(username))
+      .then(exists => {
+        if (!exists) {
+          return covidaDb.createUser(username, password)
+        } else {
+            //TODO
+            //error handling not done with these
+          throw responseMapper.UserAlreadyExists(username)
+        }
+      })
+  }
+
+  function deleteUser(username, password) {
+      //TODO 
+      //Responses not handled with these
+    return responseMapper
+      .validateParameter(username, (name) => name, "username")
+      .then(() => responseMapper.validateParameter(password, (password) => password, "password"))
+      .then(() => covidaDb.getUser(username))
+      .then((user) => {
+          if(user.username == username && user.password == password){
+              return covidaDb.deleteUser(username,password)
+          }
+            //TODO
+            //error handling not done with these
+          else throw responseMapper.Unauthorized
+
+      })
+  }
 }

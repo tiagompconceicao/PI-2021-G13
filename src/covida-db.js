@@ -1,12 +1,17 @@
 /* Nossa base de dados, trata de tudo o que for preciso guardar na base de dados */
 
-module.exports = function(groups) {
-    if(!groups){
-        groups = require('./initialGroups')
+module.exports = function(users) {
+    if(!users){
+        users = require('./initialGroups')
 
     }
 
     return {
+        createUser,
+        editUser,
+        deleteUser,
+        addGroupToUser,
+        removeGroupFromUser,
         createGroup,
         editGroup,
         deleteGroup,
@@ -18,6 +23,76 @@ module.exports = function(groups) {
         getGamesFromGroupWithinRange
     }
      
+    async function createUser(userName, userPassword){
+        //Criar grupo atribuindo-lhe um nome e descrição
+        
+        let validId
+        if(users.length != 0){
+        validId = (users.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id + 1
+        } else {
+            validId = 1
+        }
+            
+        let user = {
+            id: validId,
+            username: userName,
+            password: userPassword, 
+            groups: []
+        }
+                
+        users.push(user)
+
+        return validId   
+    }
+
+    async function editUser(newUser){
+        //Editar grupo, alterando o seu nome e descrição
+
+        const user = users.find(user => user.id == newUser.id)
+        if(user) {
+            if(newUser.username) user.username = newUser.username
+            if(newUser.password) user.password = newUser.password
+        } else {
+            throw 'Resource not found'
+        }
+    }
+
+    async function deleteUser(userId){
+        let newUsers = users.filter(user => user.id != userId)
+
+        if(newUsers.length != users.length) {
+            users = newUsers
+        } else {
+            throw ('Resource not found')
+        }
+    }
+
+    async function addGroupToUser(user, group){
+        //Adicionar um grupo a um user
+        //user.groups.push(group)
+        //Get group
+        let userGroup = user.groups.find(userGroup => userGroup.id == userGroup.id)
+
+        if(userGroup){
+            throw ("Group already exists in this User")
+        } else {
+            user.groups.push(group)
+        }
+    }
+        
+    async function removeGroupFromUser(user, groupId){
+        //Remover um grupo de um user
+        
+        let newGroups = user.groups.filter(group => group.id != groupId)
+
+        if(newGroups.length != user.groups.length) {
+            user.groups = newGroups
+
+        } else {
+            throw 'Resource not found'
+        }
+    }
+
     async function createGroup(groupName, groupDescription){
         //Criar grupo atribuindo-lhe um nome e descrição
         
@@ -34,7 +109,7 @@ module.exports = function(groups) {
             description: groupDescription, 
             games: []
         }
-                
+        
         groups.push(group)
 
         return validId   

@@ -1,13 +1,18 @@
 /** Nossa base de dados, trata de tudo o que for preciso guardar na base de dados */
 
 const urllib = require("urllib")
+//TODO 
+//baseUrl tem de mudar, porque agora não temos ligação direta aos grupos, tem de passar por um user
 const baseUrl = "http://localhost:9200/groups/"
 let validId
 
+//TODO 
+//Uris agra para chegar a um grupo têm de passar por um user e adicionar uris para o user
 const Uri = {
     GROUP: `${baseUrl}group/`,
     GET_ALL_GROUPS: `${baseUrl}_search`,
-    UPDATE: `/_update`
+    UPDATE: `/_update`,
+    USER: `${baseUrl}user/`
 }
 
 module.exports = function() {
@@ -16,6 +21,8 @@ module.exports = function() {
     })
 
     return {
+        createUser,
+        editUser,
         createGroup,
         editGroup,
         deleteGroup,
@@ -37,6 +44,75 @@ module.exports = function() {
         }
     }
      
+    async function createUser(userName, userPass){
+        //Criar grupo atribuindo-lhe um nome e descrição
+
+        let user = {
+            id: ++validId,
+            username: userName,
+            psassword: userPass, 
+            groups: []
+        }
+                
+        const settings = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(user)
+        }
+
+
+        return urllib.request(Uri.USER + user.id,settings).then(result => {
+            //result: {data: buffer, res: response object}
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err.code
+        })  
+    }
+
+    async function editUser(newUser){
+        //Editar grupo, alterando o seu nome e/ou descrição
+                
+        const settings = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({"doc" : newGroup})
+        }
+
+        return urllib.request(Uri.USER + newUser.id + Uri.UPDATE,settings).then(result => {
+            //result: {data: buffer, res: response object}
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err.code
+        })
+    }
+
+    //TODO 
+    //adicionar e remover grupos de um user
+    //temos tambem de criar a dependencia que o grupo tem de um user
+            
+    async function editGroup(newGroup){
+        //Editar grupo, alterando o seu nome e/ou descrição
+                
+        const settings = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({"doc" : newGroup})
+        }
+
+        return urllib.request(Uri.GROUP + newGroup.id + Uri.UPDATE,settings).then(result => {
+            //result: {data: buffer, res: response object}
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err.code
+        })
+    }
+
     async function createGroup(groupName, groupDescription){
         //Criar grupo atribuindo-lhe um nome e descrição
 
@@ -63,25 +139,8 @@ module.exports = function() {
             throw err.code
         })  
     }
-            
-    async function editGroup(newGroup){
-        //Editar grupo, alterando o seu nome e/ou descrição
-                
-        const settings = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify({"doc" : newGroup})
-        }
 
-        return urllib.request(Uri.GROUP + newGroup.id + Uri.UPDATE,settings).then(result => {
-            //result: {data: buffer, res: response object}
-            return JSON.parse(result.data)
-        }).catch( err => {
-            throw err.code
-        })
-    }
+    
 
     async function deleteGroup(groupId){
         //Remover grupo
