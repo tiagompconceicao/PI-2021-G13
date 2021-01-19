@@ -16,7 +16,7 @@ const Uri = {
 }
 
 module.exports = function() {
-    loadValidGroupsId().catch((err) => {
+    loadValidGroupId().catch((err) => {
         groupsId = 0
     })
 
@@ -36,8 +36,7 @@ module.exports = function() {
         getGamesFromGroupWithinRange
     }
 
-    async function loadValidGroupsId(){
-        //Not correct , must get highest id and not the counter of ids
+    async function loadValidGroupId(){
         const groups = await getAllGroups()
         if(groups.length != 0){
             groupsId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id 
@@ -46,12 +45,12 @@ module.exports = function() {
         }
     }
    
-    async function createUser(userName, userPass){
+    function createUser(username, password){
         //Criar grupo atribuindo-lhe um nome e descrição
 
         let user = {
-            username: userName,
-            psassword: userPass, 
+            username: username,
+            psassword: password, 
             groups: []
         }
                 
@@ -71,7 +70,7 @@ module.exports = function() {
         })  
     }
 
-    async function editUser(newUser){
+    function editUser(newUser){
         //Editar grupo, alterando o seu nome e/ou descrição
                 
         const settings = {
@@ -129,7 +128,7 @@ module.exports = function() {
     //adicionar e remover grupos de um user
     //temos tambem de criar a dependencia que o grupo tem de um user
             
-    async function editGroup(newGroup){
+    function editGroup(newGroup){
         //Editar grupo, alterando o seu nome e/ou descrição
                 
         const settings = {
@@ -148,7 +147,7 @@ module.exports = function() {
         })
     }
 
-    async function createGroup(groupName, groupDescription){
+    function createGroup(groupName, groupDescription){
         //Criar grupo atribuindo-lhe um nome e descrição
 
         let group = {
@@ -177,7 +176,7 @@ module.exports = function() {
 
     
 
-    async function deleteGroup(groupId){
+    function deleteGroup(groupId){
         //Remover grupo
 
         const settings = {
@@ -195,7 +194,7 @@ module.exports = function() {
         })
     }
 
-    async function getAllGroups(){
+    function getAllGroups(){
         //Listar todos os grupos
 
         const settings = {
@@ -216,7 +215,7 @@ module.exports = function() {
             
     }
 
-    async function getGroupDetails(groupId){
+    function getGroupDetails(groupId){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
         const settings = {
             method: "GET",
@@ -234,7 +233,7 @@ module.exports = function() {
         })
     }
 
-    async function verifyIfGameExistsInGroup(group, gameId){
+    function verifyIfGameExistsInGroup(group, gameId){
         //Adicionar um jogo a um grupo
         const game = group.games.find(game => game.id == gameId)
 
@@ -243,7 +242,7 @@ module.exports = function() {
         } 
     }
 
-    async function addGameToGroup(group, game){
+    function addGameToGroup(group, game){
         //Adicionar um jogo a um grupo
 
         const settings = {
@@ -270,7 +269,7 @@ module.exports = function() {
         }) 
     }
         
-    async function removeGameFromGroup(group, gameId){
+    function removeGameFromGroup(group, gameId){
         //Remover um jogo de um grupo
         const game = group.games.find(game => game.id == gameId)
         if(!game) throw "Resource not found"
@@ -300,7 +299,7 @@ module.exports = function() {
         }) 
     }
 
-    async function getGamesFromGroupWithinRange(group, min, max){
+    function getGamesFromGroupWithinRange(group, min, max){
         let filteredGames = group.games.filter(game => game.total_rating > min && game.total_rating < max)
 
         filteredGames.sort(function(a, b) {

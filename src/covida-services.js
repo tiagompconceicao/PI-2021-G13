@@ -20,28 +20,30 @@ module.exports = function(data,db) {
         validateLogin,
         checkIfGroupBelongsToUser,
         createUser,
-        deleteUser,
+        editUser,
+        deleteUser
     }
 
-    async function getGameByName(name){
+    function getGameByName(name){
         //Pesquisar jogos pelo nome
         return data.getGameByName(name)
     }
 
     //TODO
     //quando o grupo é criado, ou modificado de alguma forma, este tem de estar associado a um user, teremos de criar essa dependencia
-    async function createGroup(groupName, description){
-        //TODO: Verificar se não é passado espaços em branco
+    function createGroup(groupName, description){
         if(!groupName || !description){
             throw 'Missing arguments'
         } else if (groupName.trim().length <= 0 || description.trim().length <= 0 ){
             throw 'Bad input'
         } else {
-            return db.createGroup(groupName, description) 
+            //Verificar se o username existe
+            return db.createGroup(groupName, description)
+            //Adicionar group id ao array de grupos do user
         }
     }
         
-    async function editGroup(newGroup){
+    function editGroup(newGroup){
         //Editar grupo, alterando o seu nome e descrição
         if(!newGroup.description && !newGroup.name){
             throw 'Missing arguments'
@@ -54,25 +56,28 @@ module.exports = function(data,db) {
         })  
     }
 
-    async function deleteGroup(groupId){
+    function deleteGroup(groupId){
         if(!groupId){
             throw 'Missing arguments'
         }
 
         return db.getGroupDetails(groupId).then(group => {
+            //verificar se groupId existe no array de groups do username
             return db.deleteGroup(group.id)
+            //Remover groupId do array em username
+            
         }).catch( err => {
             throw err
         }) 
     }
 
-    async function getAllGroups(){
+    function getAllGroups(){
         //Listar todos os grupos
         return db.getAllGroups()
     }
         
     
-    async function getGroupDetails(groupId){
+    function getGroupDetails(groupId){
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
         if(!groupId){
             throw 'Missing arguments'
@@ -81,7 +86,7 @@ module.exports = function(data,db) {
         return db.getGroupDetails(groupId)
     }
         
-    async function addGameToGroup(groupId, gameId){
+    function addGameToGroup(groupId, gameId){
         //Adicionar um jogo a um grupo
         if(!groupId || !gameId){
             throw 'Missing arguments'
@@ -106,7 +111,7 @@ module.exports = function(data,db) {
         })
     }
         
-    async function removeGameFromGroup(groupId, gameId){
+    function removeGameFromGroup(groupId, gameId){
         //Remover um jogo de um grupo
         if(!groupId || !gameId){
             throw 'Missing arguments'
@@ -119,7 +124,7 @@ module.exports = function(data,db) {
         })
     }
         
-    async function getGamesFromGroupWithinRange(groupId, min, max){
+    function getGamesFromGroupWithinRange(groupId, min, max){
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
 
         if(min > max || min <= 0 || max >= 100){
@@ -178,6 +183,31 @@ module.exports = function(data,db) {
             return db.createUser(username, password) 
         })
     }
+  }
+
+  function editUser(newUser){
+      //Editar grupo, alterando o seu nome e descrição
+      if(!newUser.username || !newUser.password || !newUser.groups){
+        throw 'Missing arguments'
+    }
+
+    return db.getUser(newUser.username).then(user => {
+        return db.editUser(newUser)
+    }).catch( err => {
+        throw err
+    })  
+  }
+
+  function deleteUser(username){
+    if(!username){
+        throw 'Missing arguments'
+    }
+
+    return db.getGroupDetails(username).then(user => {
+        return db.deleteGroup(username)
+    }).catch( err => {
+        throw err
+    }) 
   }
   
 }
