@@ -4,10 +4,10 @@ const urllib = require("urllib")
 //TODO 
 //baseUrl tem de mudar, porque agora não temos ligação direta aos grupos, tem de passar por um user
 const baseUrl = "http://localhost:9200/groups/"
-let validId
+let groupsId
 
 //TODO 
-//Uris agra para chegar a um grupo têm de passar por um user e adicionar uris para o user
+//Uris agora para chegar a um grupo têm de passar por um user e adicionar uris para o user
 const Uri = {
     GROUP: `${baseUrl}group/`,
     GET_ALL_GROUPS: `${baseUrl}_search`,
@@ -16,13 +16,15 @@ const Uri = {
 }
 
 module.exports = function() {
-    loadValidId().catch((err) => {
-        validId = 0
+    loadValidGroupsId().catch((err) => {
+        groupsId = 0
     })
 
     return {
         createUser,
         editUser,
+        deleteUser,
+        getUser,
         createGroup,
         editGroup,
         deleteGroup,
@@ -34,21 +36,20 @@ module.exports = function() {
         getGamesFromGroupWithinRange
     }
 
-    async function loadValidId(){
+    async function loadValidGroupsId(){
         //Not correct , must get highest id and not the counter of ids
         const groups = await getAllGroups()
         if(groups.length != 0){
-            validId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id 
+            groupsId = (groups.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id 
         } else {
-            validId = 0
+            groupsId = 0
         }
     }
-     
+   
     async function createUser(userName, userPass){
         //Criar grupo atribuindo-lhe um nome e descrição
 
         let user = {
-            id: ++validId,
             username: userName,
             psassword: userPass, 
             groups: []
@@ -62,8 +63,7 @@ module.exports = function() {
             data: JSON.stringify(user)
         }
 
-
-        return urllib.request(Uri.USER + user.id,settings).then(result => {
+        return urllib.request(Uri.USER ,user.username ,settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
@@ -79,16 +79,51 @@ module.exports = function() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: JSON.stringify({"doc" : newGroup})
+            data: JSON.stringify({"doc" : newUser})
         }
 
-        return urllib.request(Uri.USER + newUser.id + Uri.UPDATE,settings).then(result => {
+        return urllib.request(Uri.USER + newUser.userName + Uri.UPDATE,settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch( err => {
             throw err.code
         })
     }
+
+    function deleteUser (userName){
+
+        const settings = {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        return urllib.request(Uri.USER + userName, settings).then(result => {
+            //result: {data: buffer, res: response object}
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err.code
+        })
+    }
+
+    function getUser (userName){
+        const settings = {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        return urllib.request(Uri.USER + userName + "/_source",settings).then(result => {
+            //result: {data: buffer, res: response object}
+            if(JSON.parse(result.data).error) throw "Resource not found"
+            return JSON.parse(result.data)
+        }).catch( err => {
+            throw err.code
+        })
+    }
+
 
     //TODO 
     //adicionar e remover grupos de um user
@@ -117,7 +152,7 @@ module.exports = function() {
         //Criar grupo atribuindo-lhe um nome e descrição
 
         let group = {
-            id: ++validId,
+            id: ++groupsId,
             name: groupName,
             description: groupDescription, 
             games: []

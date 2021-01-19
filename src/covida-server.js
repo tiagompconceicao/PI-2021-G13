@@ -96,8 +96,6 @@ function homeNotAuthenticated(req, rsp) {
       }, (err) => rsp.redirect('/home/authenticated'))
     }
   
-  
-  
     function validateUser(username, password) { return true }
   }
   

@@ -1,6 +1,3 @@
-const covidaDb = require("./covida-db")
-
-
 module.exports = function(data,db) {
     if(!data){
         throw 'Invalid data object'
@@ -54,8 +51,7 @@ module.exports = function(data,db) {
             return db.editGroup(newGroup)
         }).catch( err => {
             throw err
-        }) 
-        
+        })  
     }
 
     async function deleteGroup(groupId){
@@ -137,61 +133,51 @@ module.exports = function(data,db) {
         })
     }
 
-
-
   function getUser(username){
-    return covidaDb.getUser(username)
+      if(!username)
+      throw "Missing arguments"
+    return db.getUser(username)
   }
 
   function validateLogin(username, password) {
-    return covidaDb.validateLogin(username, password)
+    return getUser(username)
+    .then(user => {
+        if(user){
+            if(user.password == password)
+            return true
+            else 
+            return false
+        }
+    })
+    .catch(err =>{
+        throw err
+    })
   }
 
   function checkIfGroupBelongsToUser(username, groupId) {
-    return covidaDb.getUser(username)
+    return db.getUser(username)
       .then(user => {
         if (user.groups.find((id) => id == groupId)) {
           return true
         }
-        //TODO
-        //error handling not done with these
-        throw responseMapper.NoSuchResource("Group")
+        throw "Resource not found"
       })
   }
 
-  function createUser(username, password) {
-      //TODO 
-      //Responses not handled with these
-    return responseMapper
-      .validateParameter(username, (name) => name, "username")
-      .then(() => responseMapper.validateParameter(password, (password) => password, "password"))
-      .then(() => covidaDb.userExists(username))
-      .then(exists => {
-        if (!exists) {
-          return covidaDb.createUser(username, password)
-        } else {
-            //TODO
-            //error handling not done with these
-          throw responseMapper.UserAlreadyExists(username)
-        }
-      })
+  function createUser(username, password){
+    if(!username || !password){
+        throw 'Missing arguments'
+    } else if (username.trim().length <= 0 || password.trim().length <= 0 ){
+        throw 'Bad input'
+    } else {
+        return db.getUser(username)
+        .then( () =>{
+            throw "User already exists"
+        })
+        .catch ( () => {
+            return db.createUser(username, password) 
+        })
+    }
   }
-
-  function deleteUser(username, password) {
-      //TODO 
-      //Responses not handled with these
-    return responseMapper
-      .validateParameter(username, (name) => name, "username")
-      .then(() => responseMapper.validateParameter(password, (password) => password, "password"))
-      .then(() => covidaDb.getUser(username))
-      .then((user) => {
-          if(user.username == username && user.password == password){
-              return covidaDb.deleteUser(username,password)
-          }
-            //TODO
-            //error handling not done with these
-          else throw responseMapper.Unauthorized
-
-      })
-  }
+  
 }
