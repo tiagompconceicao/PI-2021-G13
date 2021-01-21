@@ -6,7 +6,6 @@ module.exports = function(services){
     }
 
     return {
-        
         getGameByName,
         createGroup,
         editGroup,
