@@ -29,46 +29,56 @@ module.exports = function (data, db) {
         return data.getGameByName(name)
     }
 
-    //TODO
-    //quando o grupo é criado, ou modificado de alguma forma, este tem de estar associado a um user, teremos de criar essa dependencia
-    function createGroup(groupName, description) {
+
+    function createGroup(groupName, description, userId) {
         if (!groupName || !description) {
             throw 'Missing arguments'
         } else if (groupName.trim().length <= 0 || description.trim().length <= 0) {
             throw 'Bad input'
         } else {
-            //Verificar se o username existe
-            return db.createGroup(groupName, description)
-            //Adicionar group id ao array de grupos do user
+            return db.getUser(userId).then(user => {
+                return db.createGroup(groupName, description).then(group => {
+                    user.groups.push(group._id)
+                    return db.editUser(user)
+                })
+            })
         }
     }
 
-    function editGroup(newGroup) {
+    function editGroup(userId, newGroup) {
         //Editar grupo, alterando o seu nome e descrição
-        if (!newGroup.description && !newGroup.name) {
+        if (!newGroup.description || !newGroup.name) {
             throw 'Missing arguments'
         }
 
-        return db.getGroupDetails(newGroup.id).then(group => {
-            return db.editGroup(newGroup)
+        return checkIfGroupBelongsToUser(userId, newGroup.id).then(result => {
+            return db.getGroupDetails(newGroup.id).then(group => {
+                return db.editGroup(newGroup)
+            }).catch(err => {
+                throw err
+            })
         }).catch(err => {
             throw err
         })
+        
     }
 
-    function deleteGroup(groupId) {
+    function deleteGroup(groupId, userId) {
         if (!groupId) {
             throw 'Missing arguments'
         }
 
-        return db.getGroupDetails(groupId).then(group => {
-            //verificar se groupId existe no array de groups do username
-            return db.deleteGroup(group.id)
-            //Remover groupId do array em username
-
+        return checkIfGroupBelongsToUser(userId, groupId).then(result => {
+            let newGroups = user.groups.filter(group => group.id != groupId)
+                if(newGroups.length != user.groups.length) {
+                user.groups = newGroups
+                } 
+            return db.deleteGroup(groupId).then(group => {
+                return db.editUser(user)
+            })
         }).catch(err => {
             throw err
-        })
+        })            
     }
 
     function getAllGroups() {
@@ -77,29 +87,36 @@ module.exports = function (data, db) {
     }
 
 
-    function getGroupDetails(groupId) {
+    function getGroupDetails(userId, groupId) {
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
         if (!groupId) {
             throw 'Missing arguments'
         }
-
-        return db.getGroupDetails(groupId)
+        return checkIfGroupBelongsToUser(userId, groupId).then(result => {
+            return db.getGroupDetails(groupId)
+        }).catch(err => {
+            throw err
+        })
     }
 
-    function addGameToGroup(groupId, gameId) {
+    function addGameToGroup(userId, groupId, gameId) {
         //Adicionar um jogo a um grupo
         if (!groupId || !gameId) {
             throw 'Missing arguments'
         }
 
-        return db.getGroupDetails(groupId).then(group => {
-            return db.verifyIfGameExistsInGroup(group, gameId).then(() => {
-                return data.getGameById(gameId).then(data => {
-                    if (data == null) {
-                        throw "Resource not found"
-                    } else {
-                        return db.addGameToGroup(group, data)
-                    }
+        return checkIfGroupBelongsToUser(userId, groupId).then(result => {
+            return db.getGroupDetails(groupId).then(group => {
+                return db.verifyIfGameExistsInGroup(group, gameId).then(() => {
+                    return data.getGameById(gameId).then(data => {
+                        if (data == null) {
+                            throw "Resource not found"
+                        } else {
+                            return db.addGameToGroup(group, data)
+                        }
+                    }).catch(err => {
+                        throw err
+                    })
                 }).catch(err => {
                     throw err
                 })
@@ -109,64 +126,72 @@ module.exports = function (data, db) {
         }).catch(err => {
             throw err
         })
+        
     }
 
-    function removeGameFromGroup(groupId, gameId) {
+    function removeGameFromGroup(userId, groupId, gameId) {
         //Remover um jogo de um grupo
         if (!groupId || !gameId) {
             throw 'Missing arguments'
         }
 
-        return db.getGroupDetails(groupId).then(group => {
-            return db.removeGameFromGroup(group, gameId)
+        return checkIfGroupBelongsToUser(userId, groupId).then(result => {
+            return db.getGroupDetails(groupId).then(group => {
+                return db.removeGameFromGroup(group, gameId)
+            }).catch(err => {
+                throw err
+            })
         }).catch(err => {
             throw err
         })
+        
     }
 
-    function getGamesFromGroupWithinRange(groupId, min, max) {
+    function getGamesFromGroupWithinRange(userId, groupId, min, max) {
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
 
         if (min > max || min <= 0 || max >= 100) {
             throw 'Bad input'
         }
 
-        return db.getGroupDetails(groupId).then(group => {
-            return db.getGamesFromGroupWithinRange(group, min, max)
+        return checkIfGroupBelongsToUser(userId, groupId).then(result => {
+            return db.getGroupDetails(groupId).then(group => {
+                return db.getGamesFromGroupWithinRange(group, min, max)
+            }).catch(err => {
+                throw err
+            })
+        }).catch(err => {
+            throw err
+        })
+        
+    }
+
+    function getUser(userId) {
+        if (!userId)
+            throw "Missing arguments"
+        return db.getUser(userId)
+    }
+
+    function validateLogin(userId, password) {
+        return getUser(userId).then(user => {
+            if (user) {
+                if (user.password == password)
+                    return true
+                else
+                    return false
+            }
         }).catch(err => {
             throw err
         })
     }
 
-    function getUser(username) {
-        if (!username)
-            throw "Missing arguments"
-        return db.getUser(username)
-    }
-
-    function validateLogin(username, password) {
-        return getUser(username)
-            .then(user => {
-                if (user) {
-                    if (user.password == password)
-                        return true
-                    else
-                        return false
-                }
-            })
-            .catch(err => {
-                throw err
-            })
-    }
-
-    function checkIfGroupBelongsToUser(username, groupId) {
-        return db.getUser(username)
-            .then(user => {
-                if (user.groups.find((id) => id == groupId)) {
-                    return true
-                }
-                throw "Resource not found"
-            })
+    function checkIfGroupBelongsToUser(userId, groupId) {
+        return db.getUser(userId).then(user => {
+            if (user.groups.find((id) => id == groupId)) {
+                return true
+            }
+            throw "Resource not found"
+        })
     }
 
     function createUser(username, password) {
@@ -185,33 +210,35 @@ module.exports = function (data, db) {
         }
     }
 
-    // function editUser(newUser) {
-    //     //Editar grupo, alterando o seu nome e descrição
-    //     if (!newUser.username || !newUser.password || !newUser.groups) {
-    //         throw 'Missing arguments'
-    //     }
-    //     if (validateLogin(newUser.username, newUser.password)) {
-    //         return db.getUser(newUser.username).then(user => {
-    //             return db.editUser(newUser)
-    //         }).catch(err => {
-    //             throw err
-    //         })
-    //     }
-    // }
+    function editUser(newUser) {
+        //Editar user, possibilitando alterar a sua password e grupos
+        if (!newUser.username || !newUser.password || !newUser.groups) {
+             throw 'Missing arguments'
+        }
+        if (validateLogin(newUser.id, newUser.password)) {
+            return db.getUser(newUser.id).then(user => {
+                return db.editUser(newUser)
+            }).catch(err => {
+               throw err
+            })
+        }
+    }
 
-    async function deleteUser(user) {
-        if (!user.username && !user.password) {
+    function deleteUser(user) {
+        if (!user.username || !user.password || !user.id) {
             throw 'Missing arguments'
         }
 
-        if (validateLogin(user.username, user.password)) {
-            return db.getUser(user.id).then(user => {
-                user.groups.map(groupId => {await db.deleteGroup(groupId)} )
-                return db.deleteUser(user.id)
-            }).catch(err => {
+        if (validateLogin(user.id, user.password)) {
+            return db.getUser(user.id).then(processDelete).catch(err => {
                 throw err
             })
         }
+    }
+
+    async function processDelete(user){
+        await Promise.all(user.groups.map(groupId => db.deleteGroup(groupId)))
+        return db.deleteUser(user.id)
     }
 
 }

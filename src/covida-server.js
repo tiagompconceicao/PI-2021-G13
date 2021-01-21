@@ -14,7 +14,7 @@ const expressSession = require('express-session');
 const igdbDb = require('./igdb-data')
 const covidaDb = require('./covida-db-elastic')()
 const covidaServices= require('./covida-services')(igdbDb,covidaDb)
-const webapi  = require('./covida-web-api')(covidaServices)
+const webApi  = require('./covida-web-site')(covidaServices)
 
 const app = express()
 
@@ -27,8 +27,8 @@ app.use(express.json())
 app.use(passport.initialize())
 app.use(passport.session())
 
-passport.serializeUser(serializeUser);
-passport.deserializeUser(deserializeUser);
+passport.serializeUser(webApi.serializeUser);
+passport.deserializeUser(webApi.deserializeUser);
 
 
 app.use('/auth', verifyAuthenticated)
@@ -65,7 +65,7 @@ function apiCheck(req, rsp) {
       })
 }
 
-/*
+
 function homeNotAuthenticated(req, rsp) {
     let user = req.user ? req.user.username : "unknown"
     rsp.end(`Everybody can reach  this endpoint. Hello ${user}`) 
@@ -109,4 +109,4 @@ function homeNotAuthenticated(req, rsp) {
   function logout(req, rsp) {
     req.logout()
     rsp.redirect('/home')
-  }*/
+  }

@@ -1,14 +1,11 @@
 /** Nossa base de dados, trata de tudo o que for preciso guardar na base de dados */
 
 const urllib = require("urllib")
-//TODO 
-//baseUrl tem de mudar, porque agora não temos ligação direta aos grupos, tem de passar por um user
+
 const baseUrl = "http://localhost:9200/"
 let groupsId
 let usersId
 
-//TODO 
-//Uris agora para chegar a um grupo têm de passar por um user e adicionar uris para o user
 const Uri = {
     GROUP: `${baseUrl}groups/group/`,
     GET_ALL_GROUPS: `${baseUrl}groups/_search`,

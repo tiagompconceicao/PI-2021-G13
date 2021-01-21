@@ -1,26 +1,39 @@
 const express = require("express")
 
-module.exports = function (covidaServices) {
-  if (!covidaServices) {
-    throw "Invalid CovidaServices object"
+module.exports = function (services) {
+  if (!services) {
+    throw "Invalid services object"
   }
 
   const router = express.Router()
 
+  router.use('/auth', verifyAuthenticated)
   router.get("/groups", getAllGroups)
-  router.get("/groups/new-task", createGroupForm)
-  router.get("/groups/:id", getGroupDetails)
-  router.delete("/groups/:id", deleteGroup)
-  router.put("/groups/:id", editGroup)
+  router.get("/groups/new-group", createGroupForm)
+  router.get("/groups/:groupId", getGroupDetails)
+  router.delete("/groups/:groupId", deleteGroup)
+  router.put("/groups/:groupId", editGroup)
   router.post("/groups", createGroup)
-  return router
+
+  router.get("/games/:gameName", getGameByName)
+  router.post('/login', validateLogin)
+  router.put('/auth/logout', logout)
+  router.get("/auth/groups/:id", getGroupDetail)
+  router.put("/auth/groups/:id/games", putGameInGroup)
+  router.delete("/auth/groups/:id/games/:idGame", deleteGameInGroup)
+  router.get("/auth/groups/:id/games", getGamesInGroupWithinTime)
+  router.post("/users", createUser)
+  router.delete("/users/:userId", deleteUser)
+  router.put("/users/:userId", editUser)
+  router.get("/session",getSessionState)
+
 
   function getAllGroups(req, rsp) {
-    covidaServices.getAllGroups(() => rsp.render('groups', { title : "All groups", groups: groups}))
+    services.getAllGroups(() => rsp.render('groups', { title : "All groups", groups: groups}))
   }
 
   function getGroupDetails(req, rsp) {
-    covidaServices.getGroup(req.params.id)
+    services.getGroup(req.params.id)
     /*function processGetTask(err, task) {
       if (err) {
         sendNotFound(req, rsp)
@@ -33,7 +46,7 @@ module.exports = function (covidaServices) {
   function deleteGroup(req, rsp) {
     const id = req.params.id
 
-    covidaServices.deleteGroup(req.params.id)
+    services.deleteGroup(req.params.id)
 
     /*function processDeleteTask(err, task) {
       if (err) {
@@ -48,7 +61,7 @@ module.exports = function (covidaServices) {
     const group = req.body
     group.id = id
 
-    covidaServices.editGroup(group)
+    services.editGroup(group)
 
     /*function processUpdateTask(err, task) {
       if (err) {
@@ -68,7 +81,7 @@ module.exports = function (covidaServices) {
     const group = { groupName: req.body.name, description: req.body.description }
 
     console.log("#######", group)
-    covidaServices.createGroup(group.groupName, group.description)
+    services.createGroup(group.groupName, group.description)
     
     /*function processCreateTask(err, task) {
       console.log("##", task)
