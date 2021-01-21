@@ -1,27 +1,23 @@
-const covidaServices = require("./covida-services")
+const express = require("express")
 
 module.exports = function(services){
     if(!services){
         throw 'Invalid services object'
     }
 
-    return {
-        getGameByName,
-        createGroup,
-        editGroup,
-        deleteGroup,
-        getAllGroups,
-        getGroupDetails,
-        addGameToGroup,
-        removeGameFromGroup,
-        getGamesFromGroupWithinRange,
-        validateLogin,
-        verifyAuthenticated,
-        getSessionState,
-        logout,
-        createUser,
-        deleteUser
-    }
+    const router = express.Router()
+
+    router.get("/covida/games/:gameName", getGameByName)
+    router.delete("/covida/groups/:groupId", deleteGroup)
+    router.put("/covida/groups/:groupId", editGroup)
+    router.post("/covida/groups", createGroup)
+    router.get("/covida/groups", getAllGroups)
+    router.get("/covida/groups/:groupId", getGroupDetails)
+    router.put("/covida/groups/:id/games", addGameToGroup)
+    router.delete("/covida/groups/:groupId/games/:gameId", removeGameFromGroup)
+    router.get(`/covida/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  
+
+    return router
 
     function getGameByName(req, rsp){
         //Pesquisar jogos pelo nome
@@ -35,8 +31,6 @@ module.exports = function(services){
         })
     }
 
-    //TODO
-    //quando o grupo é criado, ou modificado de alguma forma, este tem de estar associado a um user, teremos de criar essa dependencia
     function createGroup(req, rsp){
         //Criar grupo atribuindo-lhe um nome e descrição
 
@@ -179,96 +173,17 @@ module.exports = function(services){
         })
     } 
 
-
-
-    async function sendGroupChangeSuccess(req, rsp, id, changeType, urlSuffix = "") {
+    function sendGroupChangeSuccess(req, rsp, id, changeType, urlSuffix = "") {
         rsp.json({
           status : `Group with id ${id} ${changeType}`,
           uri: req.originalUrl + urlSuffix
         })
     }
 
-    async function sendGameChangeSuccess(req, rsp, gameId, groupId, changeType) {
+    function sendGameChangeSuccess(req, rsp, gameId, groupId, changeType) {
         rsp.json({
           status : `Game with id ${gameId} ${changeType} in group with id ${groupId}`,
           uri: req.originalUrl
         })
     }
-
-
-    function verifyAuthenticated(req, rsp, next) {
-        if (req.isAuthenticated())
-          return next()
-        //TODO 
-        //error not handled with these
-        return rsp.status(401).send(responseMapper.Unauthorized)
-      }
-    
-    
-      function validateLogin(req, rsp) {
-        if (!req.user || !req.user.username) {
-          return covidaServices.validateLogin(req.body.username, req.body.password)
-            .then((isValid) => {
-              if (isValid) {
-                req.login({ username: req.body.username }, (err => {
-                  if (err) {
-                    //TODO 
-                    //error not handled with these
-                    throw responseMapper.Unauthorized
-                  }
-                  //TODO 
-                  //processResponse is handled in another way
-                  return processResponse(null, { status: "Authenticated" }, rsp)
-                }
-                ))
-              } else {
-                //TODO 
-                //error not handled with these
-                throw responseMapper.Unauthorized
-              }
-            })
-            //TODO 
-            //processResponse is handled in another way
-            .catch(error => processResponse(error, null, rsp))
-        }
-        //TODO 
-        //processResponse is handled in another way
-        return processResponse(responseMapper.Forbidden, null, rsp)
-      }
-    
-      function getSessionState(req,rsp){
-        //TODO 
-        //processResponse is handled in another way
-        processResponse(null,{status : req.isAuthenticated()},rsp,200)
-      }
-    
-      function logout(req, rsp) {
-        req.logout()
-        //TODO 
-        //processResponse is handled in another way
-        return processResponse(null, { status: "Logout" }, rsp)
-      }
-    
-      function createUser(req, rsp) {
-        covidaServices.createUser(req.body.username, req.body.password)
-            //TODO 
-            //processResponse is handled in another way
-          .then(value => processResponse(null, value, rsp, 201))
-            //TODO 
-            //processResponse is handled in another way
-          .catch(error => processResponse(error, null, rsp))
-      }
-    
-      function deleteUser(req, rsp) {
-        ciborgService.deleteUser(req.body.username, req.body.password)
-          .then(value => {
-            if (req.user && req.user.username == req.body.username) req.logout()
-            //TODO 
-            //processResponse is handled in another way
-            return processResponse(null, value, rsp)
-          })
-          //TODO 
-          //processResponse is handled in another way
-          .catch(error => processResponse(error, null, rsp))
-      }
 }

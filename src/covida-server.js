@@ -8,10 +8,12 @@ const passport = require('passport')
 const expressSession = require('express-session')
 const router = express.Router()
 
-const igdbDb = require('./igdb-data')
-const covidaDb = require('./covida-db-elastic')()
-const covidaServices= require('./covida-services')(igdbDb,covidaDb)
-const webApi  = require('./covida-web-site')(router, covidaServices)
+const igdbDb = require('./data/igdb-data')
+const covidaDb = require('./data/covida-db-elastic')()
+const covidaServices= require('./application-logic/covida-services')(igdbDb,covidaDb)
+const covidaApiRouter = require('./web-interface/covida-web-api')(covidaServices)
+const covidaSiteRouter  = require('./web-interface/covida-web-site')(covidaServices)
+const covidaUsersRouter = require('./web-interface/users-web-site')(covidaServices)
 
 const app = express()
 
@@ -20,30 +22,59 @@ app.use(expressSession({secret: "PI-2021i-L51D-G13"}))
 app.use(morgan('dev'))
 app.use(cookieParser())
 app.use(express.json())
+app.use(express.urlencoded())
+app.use(express.static(path.join(__dirname, 'web-interface', 'public')))
+
+/*
+app.set('views', path.join(__dirname, 'web-interface', 'views'));
+app.set('view engine', 'hbs');
+*/
 
 app.use(passport.initialize())
 app.use(passport.session())
 
-passport.serializeUser(webApi.serializeUser)
-passport.deserializeUser(webApi.deserializeUser)
+passport.serializeUser(serializeUser)
+passport.deserializeUser(deserializeUser)
 
-app.use(config.server["base_address"], router)
-app.use('/', express.static(__dirname + '/public'))
+app.get('/api', apiCheck)
+app.use('/covida/api', covidaApiRouter)
+app.use('/covida/site', verifyAuthenticated, covidaSiteRouter)
+app.use('/covida/users', covidaUsersRouter)
+
+sitemap.swagger('Covida Api', app)
 
 app.listen(PORT, () => {
     console.log(`Covida app listening at http://localhost:${PORT}`)
 })
 
-//Remover ?
-app.get('/home', homeNotAuthenticated)
-app.get('/auth/home', homeAuthenticated)
-function homeNotAuthenticated(req, rsp) {
-    let user = req.user ? req.user.username : "unknown"
-    rsp.end(`Everybody can reach  this endpoint. Hello ${user}`) 
+function serializeUser(user, done) {
+  console.log("serializeUserCalled")
+  console.log(user)
+  done(null, {username: user.username})
+}
+
+function deserializeUser(user, done) {
+  console.log("deserializeUserCalled")
+  console.log(user)
+  done(null, user)
+}
+
+
+function verifyAuthenticated(req, rsp, next) {
+  if(req.user) {
+    return next()
   }
-  
-  function homeAuthenticated(req, rsp) {
-    rsp.end(`You can only reach here if you are authenticated. Hello ${req.user.username}`)
-  }
-  
+  rsp.redirect(302, '/users/login')
+}
+
+function apiCheck(req, rsp) {
+  rsp
+    .status(200)
+    .json({
+    "name": "groups api",
+    "version": "1.0.0",
+    "description": "PI Groups API running"
+    })
+}
+
   
