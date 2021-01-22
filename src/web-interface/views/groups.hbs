@@ -1,21 +1,20 @@
 <div class="row">
-  Username: {{username}} | <a href="/users/logout"> Logout</a>
+  Username: {{username}} <a href="/users/logout"> Logout</a>
 </div>
 
 <form method="POST" action="/covida/site/groups" username='{{username}}'>
   <div class="form-group">
     <label>Group Name</label>
     <input name="name" class="form-control" placeholder="Insert Group name here" value="{{name}}" type="name">
-  </div> <!-- form-group// -->
+  </div> 
   <div class="form-group">
-    <!--<a class="float-right" href="#">Forgot?</a>-->
     <label>Group Description</label>
     <input name="description" class="form-control" placeholder="Insert Group description here" value="{{description}}" type="description">
-  </div> <!-- form-group// -->
+  </div>
   <div></div>
   <div class="form-group">
     <button type="submit" class="btn btn-primary btn-block"> Create Group </button>
-  </div> <!-- form-group// -->
+  </div>
 </form>
 
 <div class="album py-5 bg-light">

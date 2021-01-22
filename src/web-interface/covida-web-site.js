@@ -8,18 +8,16 @@ module.exports = function (services) {
   const router = express.Router()
 
 
-  //router.get("/covida/groups/new-group", createGroupForm) // ??
-  router.get("/groups/:groupId", getGroupDetails)
+  router.get("/groups/:groupId", getGroupDetails) 
   router.delete("/groups/:groupId", deleteGroup)
   router.put("/groups/:groupId", editGroup)
-  router.post("/groups", createGroup)
+  router.post("/groups", createGroup) 
   router.get("/groups", getAllUserGroups) 
-  //Fix uri e etc
-  router.get("/games/:gameName", getGameByName)
+  router.get("/games/:gameName", getGameByName) //input to url
   router.put("/groups/:id/games", addGameToGroup)
   router.get("/groups/:id/games", getGamesToGroup)
   router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup)
-  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  
+  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  //input to url
 
   return router
 

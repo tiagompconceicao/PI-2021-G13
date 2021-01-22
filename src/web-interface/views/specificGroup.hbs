@@ -5,6 +5,8 @@
   <input class="form-control mb-2" type="text" id="groupDescription" value={{description}}>
   <button class="btn btn-success" id="editGroupButton">Save Changes</button>
   -->
+
+  <!-- PUT method here to edit group, actually doing a GET--> 
   <form method="PUT" action="/groups/{{id}}">
     <div class="card mb-4 box-shadow">
           <div class="card-body">
@@ -19,6 +21,7 @@
 
   <input class="form-control mb-2" type="number" id="minRating" value="{{minRating}}"  placeholder="Minimum Rating">
   <input class="form-control mb-2" type="number" id="maxRating" value="{{maxRating}}" placeholder="Max Rating">
+  <!-- Input to url -->
   <a href="/groups/{{id}}/{{minRating}}/{{maxRating}}">
     <button  class="btn btn-secondary" id="getGamesFromGroupWithinRange">Search</button>
   </a>
