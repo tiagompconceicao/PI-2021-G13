@@ -89,7 +89,7 @@ module.exports = function (data, db) {
         //Listar todos os grupos
         //Apenas pode procurar os grupos de um determinado user
         //FIX!!
-        return db.getAllGroups()
+        return db.getAllGroups(username)
     }
 
 
