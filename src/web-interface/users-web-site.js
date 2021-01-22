@@ -50,7 +50,7 @@ module.exports = function (services) {
     
     services.validateLogin(credentials.username,credentials.password).then((status) => {
       if(status) {
-        req.login({ user: credentials.username }, (err) => rsp.redirect('/covida/site/groups'))
+        req.login({ username: credentials.username }, (err) => rsp.redirect('/covida/site/groups'))
       } else {
         rsp.render('login', {warning: "Login failed", username: credentials.username})
       }

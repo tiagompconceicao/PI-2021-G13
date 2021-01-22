@@ -1,19 +1,46 @@
-<div class="container">
-  <h1>{{title}}</h1>
-  <div class="row">
-  {{#each groups}}
-    <div class="col-sm-3">
-      <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h5 class="card-title">{{name}}</h5>
+<div class="row">
+  Username: {{username}} | <a href="/users/logout"> Logout</a>
+</div>
 
-          <p class="card-text">{{description}}</p>
-          <a href="#" class="card-link"><a href="groups/{{id}}">Card details</a>
+<form method="POST" action="/covida/site/groups" username='{{username}}'>
+  <div class="form-group">
+    <label>Group Name</label>
+    <input name="name" class="form-control" placeholder="Insert Group name here" value="{{name}}" type="name">
+  </div> <!-- form-group// -->
+  <div class="form-group">
+    <!--<a class="float-right" href="#">Forgot?</a>-->
+    <label>Group Description</label>
+    <input name="description" class="form-control" placeholder="Insert Group description here" value="{{description}}" type="description">
+  </div> <!-- form-group// -->
+  <div></div>
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary btn-block"> Create Group </button>
+  </div> <!-- form-group// -->
+</form>
+
+<div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row">
+           
+          {{#each this.groups}}
+                <div class="col-md-4">
+                  <div class="card mb-4 box-shadow">
+                    <div class="card-body">
+                      <p class="card-text">Name : {{name}}</p>
+                      <p class="card-text">Description : {{description}}</p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a href='#specificGroup/{{id}}'> 
+                            <button class="btn btn-outline-secondary" id='{{id}}'>Group details </button>
+                          </a> 
+                          <button class="deleteGroup btn btn-outline-danger" id='{{id}}'>Delete group</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            {{/each}}
+
+          </div>
         </div>
-      </div>
-    </div>
-  {{/each}}
-  </div>
-  
-  <a href="groups/new-group">Create a new group</a>
 </div>
