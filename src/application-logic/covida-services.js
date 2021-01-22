@@ -12,6 +12,7 @@ module.exports = function (data, db) {
         editGroup,
         deleteGroup,
         getAllGroups,
+        getAllUserGroups,
         getGroupDetails,
         addGameToGroup,
         removeGameFromGroup,
@@ -85,13 +86,25 @@ module.exports = function (data, db) {
                  
     }
 
-    function getAllGroups(username) {
+    function getAllGroups() {
         //Listar todos os grupos
         //Apenas pode procurar os grupos de um determinado user
         //FIX!!
         return db.getAllGroups()
     }
 
+    function getAllUserGroups(username){
+        if(!username){
+            throw "Missing arguments"
+        }
+        return db.getUser(username).then(processGroups).catch(err => {throw err})
+    }
+
+    async function processGroups(user){
+        let groups = []
+        await Promise.all(user.groups.map(groupId => groups.push(db.getGroupDetails(groupId))))
+        return groups
+    }
 
     function getGroupDetails(username, groupId) {
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem

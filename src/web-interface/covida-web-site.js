@@ -13,7 +13,7 @@ module.exports = function (services) {
   router.delete("/groups/:groupId", deleteGroup)
   router.put("/groups/:groupId", editGroup)
   router.post("/groups", createGroup)
-  router.get("/groups", getAllGroups) 
+  router.get("/groups", getAllUserGroups) 
   //Fix uri e etc
   router.get("/games/:gameName", getGameByName)
   router.put("/groups/:id/games", addGameToGroup)
@@ -40,8 +40,11 @@ module.exports = function (services) {
 
       const group = { name: req.body.name, description: req.body.description }
 
-      services.createGroup(group.name, group.description).then(result => {
-          sendGroupChangeSuccess(req, rsp, result._id, result.result)
+      console.log(req.user)
+      console.log(req.user.username)
+      services.createGroup(group.name, group.description, req.user.username).then(result => {
+        rsp.redirect('/covida/site/groups')
+        //sendGroupChangeSuccess(req, rsp, result._id, result.result)
       }).catch(err => {
           handleError(req, rsp, err)
       })
@@ -71,12 +74,17 @@ module.exports = function (services) {
       )
   }
 
-  function getAllGroups(req,rsp){
+  function getAllUserGroups(req,rsp){
       //Listar todos os grupos
-      services.getAllGroups(req.body.username).then(groups => {
-          rsp.json(groups)
+
+      services.getAllUserGroups(req.user.username).then(groups => {
+          rsp.render('groups',{username: req.user.username, title : "All groups", groups: groups})
       }).catch((err) => {
-          handleError(req, rsp, err)
+          if(err == "Resource not found"){
+            rsp.render('groups',{username: req.user.username, title : "All groups", groups: []})
+          }else{
+            handleError(req, rsp, err)
+          } 
       })
       
   }
@@ -85,6 +93,7 @@ module.exports = function (services) {
       //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
       const groupId = req.params.groupId
 
+      
       services.getGroupDetails(groupId).then(group => 
           rsp.json(group)
       ).catch(err => {
