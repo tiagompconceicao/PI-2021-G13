@@ -1,6 +1,5 @@
 /** Nossa base de dados, trata de tudo o que for preciso guardar na base de dados */
 
-const { Console } = require("console")
 const urllib = require("urllib")
 
 const baseUrl = "http://localhost:9200/"
@@ -170,7 +169,7 @@ module.exports = function () {
         })
     }
 
-    function getAllGroups(username) {
+    function getAllGroups() {
         //Listar todos os grupos
 
         const settings = {
@@ -180,25 +179,6 @@ module.exports = function () {
             }
         }
 
-        return urllib.request(Uri.USER + username + "/_source", settings).then(result => {
-            //result: {data: buffer, res: response object}
-            
-            if (JSON.parse(result.data).error) throw "Resource not found"
-            let user = JSON.parse(result.data)
-            let groups = []
-            if(user.groups.length == 0){ 
-                throw "Missing arguments"
-            }else{
-                user.groups.forEach(groupId => {
-                    groups.push(getGroupDetails(groupId))
-                });
-                return groups
-            }
-        }).catch(err => {
-            throw err
-        })
-
-        /*
         return urllib.request(Uri.GET_ALL_GROUPS, settings).then(result => {
             //result: {data: buffer, res: response object}
             let groups = JSON.parse(result.data).hits.hits
@@ -206,7 +186,7 @@ module.exports = function () {
             return groups
         }).catch(err => {
             throw err
-        })*/
+        })
 
     }
 
@@ -238,7 +218,6 @@ module.exports = function () {
             }
         }
 
-        
         return urllib.request(Uri.GROUP + groupId + "/_source", settings).then(result => {
             //result: {data: buffer, res: response object}
             if (JSON.parse(result.data).error) throw "Resource not found"
