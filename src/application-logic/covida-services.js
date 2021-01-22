@@ -97,12 +97,19 @@ module.exports = function (data, db) {
         if(!username){
             throw "Missing arguments"
         }
-        return db.getUser(username).then(processGroups).catch(err => {throw err})
+        return db.getUser(username).then(processGroups).catch(err => {throw err}) 
     }
 
     async function processGroups(user){
         let groups = []
-        await Promise.all(user.groups.map(groupId => groups.push(db.getGroupDetails(groupId))))
+
+        console.log("processing")
+        console.log(user.groups)
+        await Promise.all(user.groups.map(groupId =>{ 
+            console.log(groupId)
+            groups.push(db.getGroupDetails(groupId))}))
+        console.log("finished processing")
+
         return groups
     }
 
