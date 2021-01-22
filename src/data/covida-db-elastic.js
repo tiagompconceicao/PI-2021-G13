@@ -83,11 +83,8 @@ module.exports = function () {
 
         return urllib.request(Uri.USER + newUser.username + Uri.UPDATE, settings).then(result => {
             //result: {data: buffer, res: response object}
-            console.log(JSON.parse(result.data))
-            return JSON.parse(result.data)
-            
+            return JSON.parse(result.data)          
         }).catch(err => {
-            console.log(err)
             throw err
         })
     }
@@ -214,7 +211,6 @@ module.exports = function () {
     }
 
     function getGroupDetails(groupId) {
-        console.log("DB2")
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
         const settings = {
             method: "GET",

@@ -22,7 +22,7 @@
         <div class="container">
           <div class="row">
            
-          {{#each this.groups}}
+          {{#each groups}}
                 <div class="col-md-4">
                   <div class="card mb-4 box-shadow">
                     <div class="card-body">
@@ -30,11 +30,15 @@
                       <p class="card-text">Description : {{description}}</p>
                       <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
-                          <a href='#specificGroup/{{id}}'> 
-                            <button class="btn btn-outline-secondary" id='{{id}}'>Group details </button>
+                          <a href='/covida/site/groups/{{id}}'> 
+                            <button class="btn btn-outline-secondary"> Group details </button>
                           </a> 
-                          <button class="deleteGroup btn btn-outline-danger" id='{{id}}'>Delete group</button>
                         </div>
+                        <form action='/covida/site/groups/{{id}}' method=”delete”>
+                        <div class="delete-btn-group">  
+                            <button class="deleteGroup btn btn-outline-danger" data-method="delete"  data-confirm="Are you sure?"> Delete group</button>
+                        </div>
+                        </form>
                       </div>
                     </div>
                   </div>

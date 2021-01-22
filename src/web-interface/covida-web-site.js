@@ -17,6 +17,7 @@ module.exports = function (services) {
   //Fix uri e etc
   router.get("/games/:gameName", getGameByName)
   router.put("/groups/:id/games", addGameToGroup)
+  router.get("/groups/:id/games", getGamesToGroup)
   router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup)
   router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  
 
@@ -35,13 +36,14 @@ module.exports = function (services) {
     })
   }
 
+  function getGamesToGroup(req, rsp){
+    rsp.render("searchGames")
+  }
+
   function createGroup(req, rsp){
       //Criar grupo atribuindo-lhe um nome e descrição
-
       const group = { name: req.body.name, description: req.body.description }
 
-      console.log(req.user)
-      console.log(req.user.username)
       services.createGroup(group.name, group.description, req.user.username).then(result => {
         rsp.redirect('/covida/site/groups')
         //sendGroupChangeSuccess(req, rsp, result._id, result.result)
@@ -66,6 +68,7 @@ module.exports = function (services) {
   function deleteGroup(req, rsp){
       //Remover um grupo
       const groupId = req.params.groupId
+      console.log("chegou ao delete")
 
       services.deleteGroup(groupId).then((result) => {
           sendGroupChangeSuccess(req, rsp, result._id, result.result)}
@@ -92,10 +95,10 @@ module.exports = function (services) {
   function getGroupDetails(req, rsp){
       //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
       const groupId = req.params.groupId
-
+      const user = req.user.username
       
-      services.getGroupDetails(groupId).then(group => 
-          rsp.json(group)
+      services.getGroupDetails(user, groupId).then(group => 
+          rsp.render('specificGroup',{ group: group })
       ).catch(err => {
           handleError(req, rsp, err)
       }) 

@@ -88,8 +88,6 @@ module.exports = function (data, db) {
 
     function getAllGroups() {
         //Listar todos os grupos
-        //Apenas pode procurar os grupos de um determinado user
-        //FIX!!
         return db.getAllGroups()
     }
 
@@ -100,22 +98,27 @@ module.exports = function (data, db) {
         return db.getUser(username).then(processGroups).catch(err => {throw err}) 
     }
 
-    async function processGroups(user){
+    function processGroups(user){
         let groups = []
 
-        console.log("processing")
-        console.log(user.groups)
-        await Promise.all(user.groups.map(groupId =>{ 
-            console.log(groupId)
-            groups.push(db.getGroupDetails(groupId))}))
-        console.log("finished processing")
+        return Promise.all(user.groups.map(groupId => db.getGroupDetails(groupId)))
 
-        return groups
+        /*
+        return Promise.all(user.groups.map(groupId => { 
+            db.getGroupDetails(groupId).then(group => {
+                groups.push(group) 
+            })  
+        })).then(() => {
+            return groups
+        })
+
+        */
+
     }
 
     function getGroupDetails(username, groupId) {
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
-        if (!groupId) {
+        if (!username || !groupId) {
             throw 'Missing arguments'
         }
         return checkIfGroupBelongsToUser(username, groupId).then(result => {
