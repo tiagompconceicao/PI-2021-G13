@@ -7,15 +7,15 @@ module.exports = function(services){
 
     const router = express.Router()
 
-    router.get("/covida/games/:gameName", getGameByName)
-    router.delete("/covida/groups/:groupId", deleteGroup)
-    router.put("/covida/groups/:groupId", editGroup)
-    router.post("/covida/groups", createGroup)
-    router.get("/covida/groups", getAllGroups)
-    router.get("/covida/groups/:groupId", getGroupDetails)
-    router.put("/covida/groups/:id/games", addGameToGroup)
-    router.delete("/covida/groups/:groupId/games/:gameId", removeGameFromGroup)
-    router.get(`/covida/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  
+    router.get("/games/:gameName", getGameByName)
+    router.delete("/groups/:groupId", deleteGroup)
+    router.put("/groups/:groupId", editGroup)
+    router.post("/groups", createGroup)
+    router.get("/groups", getAllGroups)
+    router.get("/groups/:groupId", getGroupDetails)
+    router.put("/groups/:id/games", addGameToGroup)
+    router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup)
+    router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  
 
     return router
 

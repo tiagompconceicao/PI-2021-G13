@@ -7,22 +7,31 @@ module.exports = function (services) {
 
   const router = express.Router()
 
+  
+  router.get("/login", loginGet)
   router.post('/login', validateLogin)
+  router.get("/signUp", signUpGet)
+  router.post("/signUp", createUser)
   router.put('/logout', logout)  
-  router.post("/users", createUser)
-  router.delete("/users/:userId", deleteUser)
-  router.put("/users/:userId", editUser)
+  router.put("/users/:usename", editUser)
 
   return router
 
+  function loginGet(req, rsp) {
+    rsp.render('login')
+  }
+
+  function signUpGet(req, rsp) {
+    rsp.render('signUp')
+  }
+
   function createUser(req, rsp) {
-    services.createUser(req.body.username, req.body.password)
-        //TODO 
-        //processResponse is handled in another way
-      .then(value => processResponse(null, value, rsp, 201))
-        //TODO 
-        //processResponse is handled in another way
-      .catch(error => processResponse(error, null, rsp))
+    services.createUser(req.body.username, req.body.password, req.body.retypedPassword).then(value => {
+        req.login({ user: value._id }, (err) => rsp.redirect('/covida/site/groups'))
+      }).catch(error => {
+        rsp.render('signUp', {warning: error, username: req.body.username})
+      })
+      
   }
 
   function editUser(req, rsp) {
@@ -33,55 +42,21 @@ module.exports = function (services) {
       .then(value => processResponse(null, value, rsp, 201))
         //TODO 
         //processResponse is handled in another way
-      .catch(error => processResponse(error, null, rsp))
+      .catch(error => handleError(req,rsp,error))
   }
-
-  function deleteUser(req, rsp) {
-    let user = {id : req.body.id, username: req.body.username, password: req.body.password, groups: req.body.groups}
-    ciborgService.deleteUser(user)
-      .then(value => {
-        if (req.user && req.user.username == req.body.username) req.logout()
-        //TODO 
-        //processResponse is handled in another way
-        processResponse(null, value, rsp)
-      })
-      //TODO 
-      //processResponse is handled in another way
-      .catch(error => processResponse(error, null, rsp))
-  }
-
-
-
 
   function validateLogin(req, rsp) {
-    if (!req.user || !req.user.username) {
-      return services.validateLogin(req.body.username, req.body.password)
-        .then((isValid) => {
-          if (isValid) {
-            req.login({ username: req.body.username }, (err => {
-              if (err) {
-                //TODO 
-                //error not handled with these
-                throw responseMapper.Unauthorized
-              }
-              //TODO 
-              //processResponse is handled in another way
-              return processResponse(null, { status: "Authenticated" }, rsp)
-            }
-            ))
-          } else {
-            //TODO 
-            //error not handled with these
-            throw responseMapper.Unauthorized
-          }
-        })
-        //TODO 
-        //processResponse is handled in another way
-        .catch(error => processResponse(error, null, rsp))
-    }
-    //TODO 
-    //processResponse is handled in another way
-    processResponse(responseMapper.Forbidden, null, rsp)
+    const credentials = req.body
+    
+    services.validateLogin(credentials.username,credentials.password).then((status) => {
+      if(status) {
+        req.login({ user: credentials.username }, (err) => rsp.redirect('/covida/site/groups'))
+      } else {
+        rsp.render('login', {warning: "Login failed", username: credentials.username})
+      }
+    }).catch(err => {
+      rsp.render('login', {warning: err, username: credentials.username})
+    })
   }
 
   function logout(req, rsp) {

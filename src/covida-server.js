@@ -6,7 +6,7 @@ const morgan = require('morgan')
 const cookieParser = require('cookie-parser') 
 const passport = require('passport') 
 const expressSession = require('express-session')
-const router = express.Router()
+const sitemap = require('express-sitemap-html')
 
 const igdbDb = require('./data/igdb-data')
 const covidaDb = require('./data/covida-db-elastic')()
@@ -25,10 +25,10 @@ app.use(express.json())
 app.use(express.urlencoded())
 app.use(express.static(path.join(__dirname, 'web-interface', 'public')))
 
-/*
-app.set('views', path.join(__dirname, 'web-interface', 'views'));
-app.set('view engine', 'hbs');
-*/
+
+app.set('views', path.join(__dirname, 'web-interface', 'views'))
+app.set('view engine', 'hbs')
+
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -40,6 +40,7 @@ app.get('/api', apiCheck)
 app.use('/covida/api', covidaApiRouter)
 app.use('/covida/site', verifyAuthenticated, covidaSiteRouter)
 app.use('/covida/users', covidaUsersRouter)
+app.get('/covida/home', home)
 
 sitemap.swagger('Covida Api', app)
 
@@ -64,17 +65,20 @@ function verifyAuthenticated(req, rsp, next) {
   if(req.user) {
     return next()
   }
-  rsp.redirect(302, '/users/login')
+  rsp.redirect(302, '/covida/users/login')
 }
 
 function apiCheck(req, rsp) {
-  rsp
-    .status(200)
-    .json({
-    "name": "groups api",
-    "version": "1.0.0",
-    "description": "PI Groups API running"
-    })
+  rsp.status(200)
+     .json({
+     "name": "Covida api",
+     "version": "1.0.0",
+     "description": "Covida Groups API running"
+     })
+}
+
+function home(req, rsp) {
+  rsp.redirect(302, '/covida/users/login')
 }
 
   

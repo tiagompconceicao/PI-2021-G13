@@ -13,7 +13,7 @@ module.exports = function (services) {
   router.delete("/groups/:groupId", deleteGroup)
   router.put("/groups/:groupId", editGroup)
   router.post("/groups", createGroup)
-  router.get("/groups", getAllGroups) //Remover?
+  router.get("/groups", getAllGroups) 
   //Fix uri e etc
   router.get("/games/:gameName", getGameByName)
   router.put("/groups/:id/games", addGameToGroup)
@@ -73,7 +73,7 @@ module.exports = function (services) {
 
   function getAllGroups(req,rsp){
       //Listar todos os grupos
-      services.getAllGroups().then(groups => {
+      services.getAllGroups(req.body.username).then(groups => {
           rsp.json(groups)
       }).catch((err) => {
           handleError(req, rsp, err)

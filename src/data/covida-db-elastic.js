@@ -4,7 +4,6 @@ const urllib = require("urllib")
 
 const baseUrl = "http://localhost:9200/"
 let groupsId
-let usersId
 
 const Uri = {
     GROUP: `${baseUrl}groups/group/`,
@@ -19,14 +18,9 @@ module.exports = function () {
         groupsId = 0
     })
 
-    loadValidUserId().catch((err) => {
-        usersId = 0
-    })
-
     return {
         createUser,
         editUser,
-        deleteUser,
         getUser,
         createGroup,
         editGroup,
@@ -48,22 +42,12 @@ module.exports = function () {
         }
     }
 
-    async function loadValidUserId() {
-        const users = await getAllUsers()
-        if (users.length != 0) {
-            usersId = (users.reduce((prev, current) => (prev.id > current.id) ? prev : current)).id
-        } else {
-            usersId = 0
-        }
-    }
-
     function createUser(username, password) {
         //Criar grupo atribuindo-lhe um nome e descrição
 
         let user = {
-            id: ++usersId,
             username: username,
-            psassword: password,
+            password: password,
             groups: []
         }
 
@@ -75,11 +59,11 @@ module.exports = function () {
             data: JSON.stringify(user)
         }
 
-        return urllib.request(Uri.USER, user.id, settings).then(result => {
+        return urllib.request(Uri.USER + username, settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch(err => {
-            throw err.code
+            throw err
         })
     }
 
@@ -96,32 +80,15 @@ module.exports = function () {
             data: JSON.stringify({ "doc": newUser })
         }
 
-        return urllib.request(Uri.USER + newUser.id + Uri.UPDATE, settings).then(result => {
+        return urllib.request(Uri.USER + newUser.username + Uri.UPDATE, settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch(err => {
-            throw err.code
+            throw err
         })
     }
 
-    function deleteUser(id) {
-
-        const settings = {
-            method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-
-        return urllib.request(Uri.USER + id, settings).then(result => {
-            //result: {data: buffer, res: response object}
-            return JSON.parse(result.data)
-        }).catch(err => {
-            throw err.code
-        })
-    }
-
-    function getUser(id) {
+    function getUser(username) {
         const settings = {
             method: "GET",
             headers: {
@@ -129,12 +96,12 @@ module.exports = function () {
             }
         }
 
-        return urllib.request(Uri.USER + id + "/_source", settings).then(result => {
+        return urllib.request(Uri.USER + username + "/_source", settings).then(result => {
             //result: {data: buffer, res: response object}
             if (JSON.parse(result.data).error) throw "Resource not found"
             return JSON.parse(result.data)
         }).catch(err => {
-            throw err.code
+            throw err
         })
     }
 
@@ -153,7 +120,7 @@ module.exports = function () {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch(err => {
-            throw err.code
+            throw err
         })
     }
 
@@ -180,7 +147,7 @@ module.exports = function () {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch(err => {
-            throw err.code
+            throw err
         })
     }
 
@@ -198,7 +165,7 @@ module.exports = function () {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch(err => {
-            throw err.code
+            throw err
         })
     }
 
@@ -218,7 +185,7 @@ module.exports = function () {
             groups = groups.map(group => group = group._source)
             return groups
         }).catch(err => {
-            throw err.code
+            throw err
         })
 
     }
@@ -237,7 +204,7 @@ module.exports = function () {
             users = users.map(user => user = user._source)
             return users
         }).catch(err => {
-            throw err.code
+            throw err
         })
 
     }
@@ -256,7 +223,7 @@ module.exports = function () {
             if (JSON.parse(result.data).error) throw "Resource not found"
             return JSON.parse(result.data)
         }).catch(err => {
-            throw err.code
+            throw err
         })
     }
 
@@ -292,7 +259,7 @@ module.exports = function () {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch(err => {
-            throw err.code
+            throw err
         })
     }
 
@@ -322,7 +289,7 @@ module.exports = function () {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch(err => {
-            throw err.code
+            throw err
         })
     }
 

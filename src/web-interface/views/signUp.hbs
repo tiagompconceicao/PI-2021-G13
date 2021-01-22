@@ -1,0 +1,36 @@
+  <div class="row">
+    <aside class="col-sm-4">
+      <p>Register user</p>
+      <div class="card">
+        <article class="card-body">
+          <h4 class="card-title mb-4 mt-1">Sign up</h4>
+          {{#if warning}}
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{warning}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          {{/if}}
+
+          <form method="POST" action="/covida/users/signUp">
+            <div class="form-group">
+              <label>Your username</label>
+              <input name="username" class="form-control" placeholder="Insert Username here" value="{{username}}" type="username">
+            </div> <!-- form-group// -->
+            <div class="form-group">
+              <!--<a class="float-right" href="#">Forgot?</a>-->
+              <label>Your password</label>
+              <input name="password" class="form-control" placeholder="******" value="{{password}}" type="password">
+            </div> <!-- form-group// -->
+            <div class="form-group">
+              <!--<a class="float-right" href="#">Forgot?</a>-->
+              <label>Retype your password</label>
+              <input name="retypedPassword" class="form-control" placeholder="******" value="{{password}}" type="password">
+            </div> <!-- form-group// -->
+            <div></div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-block"> Sign Up </button>
+            </div> <!-- form-group// -->
+          </form>
+        </article>
+      </div> <!-- card.// -->
+  </div>
