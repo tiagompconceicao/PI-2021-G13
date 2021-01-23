@@ -33,11 +33,10 @@
                             <button class="btn btn-outline-secondary"> Group details </button>
                           </a> 
                         </div>
-                        <form action='/covida/site/groups/{{id}}' method=”delete”>
                         <div class="delete-btn-group">  
-                            <button class="deleteGroup btn btn-outline-danger" data-method="delete"  data-confirm="Are you sure?"> Delete group</button>
+                             <!-- insert in script to process delete --> 
+                            <button onclick=deleteGroup({{id}}) class="deleteGroup btn btn-outline-danger"> Delete group</button>
                         </div>
-                        </form>
                       </div>
                     </div>
                   </div>
@@ -47,3 +46,4 @@
           </div>
         </div>
 </div>
+<script src="/js/groups.js"></script>

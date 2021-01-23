@@ -64,7 +64,7 @@ module.exports = function (data, db) {
     }
 
     function deleteGroup(groupId, username) {
-        if (!groupId) {
+        if (!groupId || !username) {
             throw 'Missing arguments'
         }
 
@@ -75,12 +75,15 @@ module.exports = function (data, db) {
                     user.groups = newGroups
                     } 
                 return db.deleteGroup(groupId).then(group => {
-                    return db.editUser(user)
+                    console.log("deu certo??")
+                    return db.removeGroupFromUser(groupId,username)
                 })
             }).catch(err => {
+                console.log("cathc 2")
                 throw err
             })   
         }).catch(err => {
+            console.log("cathc 1")
             throw err
         })
                  
@@ -99,20 +102,8 @@ module.exports = function (data, db) {
     }
 
     function processGroups(user){
-        let groups = []
 
         return Promise.all(user.groups.map(groupId => db.getGroupDetails(groupId)))
-
-        /*
-        return Promise.all(user.groups.map(groupId => { 
-            db.getGroupDetails(groupId).then(group => {
-                groups.push(group) 
-            })  
-        })).then(() => {
-            return groups
-        })
-
-        */
 
     }
 
@@ -136,16 +127,16 @@ module.exports = function (data, db) {
 
         return checkIfGroupBelongsToUser(username, groupId).then(result => {
             return db.getGroupDetails(groupId).then(group => {
-                return db.verifyIfGameExistsInGroup(group, gameId).then(() => {
-                    return data.getGameById(gameId).then(data => {
-                        if (data == null) {
-                            throw "Resource not found"
-                        } else {
-                            return db.addGameToGroup(group, data)
-                        }
-                    }).catch(err => {
-                        throw err
-                    })
+                const game = group.games.find(game => game.id == gameId)
+                if (game) {
+                    throw "Game already exists in this group"
+                }
+                return data.getGameById(gameId).then(data => {
+                    if (data == null) {
+                        throw "Resource not found"
+                    } else {
+                        return db.addGameToGroup(group, data)
+                    }
                 }).catch(err => {
                     throw err
                 })
@@ -187,9 +178,11 @@ module.exports = function (data, db) {
             return db.getGroupDetails(groupId).then(group => {
                 return db.getGamesFromGroupWithinRange(group, min, max)
             }).catch(err => {
+                console.log("Catch 2")
                 throw err
             })
         }).catch(err => {
+            console.log("catch 1")
             throw err
         })
         
@@ -232,6 +225,7 @@ module.exports = function (data, db) {
             if (user.groups.find((id) => id == groupId)) {
                 return true
             }
+            console.log("Iisto ta def")
             throw "Resource not found"
         })
     }

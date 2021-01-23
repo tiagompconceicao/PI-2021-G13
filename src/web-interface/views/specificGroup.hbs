@@ -7,24 +7,22 @@
   -->
 
   <!-- PUT method here to edit group, actually doing a GET--> 
-  <form method="PUT" action="/groups/{{id}}">
+  <!-- <form method="PUT" action="/groups/{{id}}"> -->
     <div class="card mb-4 box-shadow">
           <div class="card-body">
             <label>Name</label> <input class="form-control mb-2" type="text" id="groupName" placeholder = {{name}}>
             <label>Description</label> <input class="form-control mb-2" type="text" id="groupDescription" placeholder = {{description}}>
-            <button class="btn btn-success" id="editGroupButton">Save Changes</button>
+            <button onclick=editGroup({{id}}) class="btn btn-success" id="editGroupButton">Save Changes</button>
         </div>
     </div>
-  </form>
+  <!-- </form> -->
 
   <h3> Search Games Between : </h3>
 
   <input class="form-control mb-2" type="number" id="minRating" value="{{minRating}}"  placeholder="Minimum Rating">
   <input class="form-control mb-2" type="number" id="maxRating" value="{{maxRating}}" placeholder="Max Rating">
   <!-- Input to url -->
-  <a href="/groups/{{id}}/{{minRating}}/{{maxRating}}">
-    <button  class="btn btn-secondary" id="getGamesFromGroupWithinRange">Search</button>
-  </a>
+  <button onclick=filterGames({{id}}) class="btn btn-secondary" id="getGamesFromGroupWithinRange">Search</button>
   
 
   <h2> Group Games </h2>
@@ -34,15 +32,14 @@
            {{#each games}}
             <div class="col-md-4">
               <div class="card mb-4 box-shadow">
-                <img class="card-img-top" src='{{image_url}}' alt="game image cap">
                 <div class="card-body">
-                  <p class="card-text">{{name}}</p>
-                  <p class="card-text">{{description}}</p>
+                  <p class="card-text">Name: {{name}}</p>
+                  <p class="card-text">Rating: {{total_rating}}</p>
+                  <p class="card-text">Summary: {{summary}}</p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
                       <button class="deleteGameOfGroup btn btn-sm btn-outline-secondary" id='{{id}}'>Remove</button>
                     </div>
-                    <small class="text-muted">Max Playtime : {{max_playtime}}</small>
                   </div>
                 </div>
               </div>
@@ -57,3 +54,5 @@
         </button>
     </a>
 {{/with}}
+
+<script src="/js/groupDetails.js" ></script>

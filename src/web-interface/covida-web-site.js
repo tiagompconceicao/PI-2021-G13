@@ -8,14 +8,14 @@ module.exports = function (services) {
   const router = express.Router()
 
 
-  router.get("/groups/:groupId", getGroupDetails) 
+  router.get("/groups/:groupId", getGroupDetails) //done
   router.delete("/groups/:groupId", deleteGroup)
   router.put("/groups/:groupId", editGroup)
-  router.post("/groups", createGroup) 
-  router.get("/groups", getAllUserGroups) 
+  router.post("/groups", createGroup) //done
+  router.get("/groups", getAllUserGroups)  //done
   router.get("/games/:gameName", getGameByName) //input to url
-  router.put("/groups/:id/games", addGameToGroup)
-  router.get("/groups/:id/games", getGamesToGroup)
+  router.put("/groups/:id/games/:gameId", addGameToGroup)
+  router.get("/groups/:id/games", getGamesToGroup) //done
   router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup)
   router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  //input to url
 
@@ -26,16 +26,15 @@ module.exports = function (services) {
     //Pesquisar jogos pelo nome
     const name = req.params.gameName
 
-    services.getGameByName(name).then((game) => {
-        //rsp.json(JSON.parse(game.data))
-        rsp.json(game)
+    services.getGameByName(name).then((games) => {
+        rsp.render("searchGames",{games:games})
     }).catch(err => {
         handleError(req, rsp, err)
     })
   }
 
   function getGamesToGroup(req, rsp){
-    rsp.render("searchGames")
+    rsp.render("searchGames",{games : req.body})
   }
 
   function createGroup(req, rsp){
@@ -66,9 +65,10 @@ module.exports = function (services) {
   function deleteGroup(req, rsp){
       //Remover um grupo
       const groupId = req.params.groupId
+      const user = req.user.username
       console.log("chegou ao delete")
 
-      services.deleteGroup(groupId).then((result) => {
+      services.deleteGroup(groupId,user).then((result) => {
           sendGroupChangeSuccess(req, rsp, result._id, result.result)}
       ).catch(err => 
           handleError(req, rsp, err)
@@ -79,7 +79,7 @@ module.exports = function (services) {
       //Listar todos os grupos
 
       services.getAllUserGroups(req.user.username).then(groups => {
-          rsp.render('groups',{username: req.user.username, title : "All groups", groups: groups})
+          rsp.render('groups',{username: req.user.username, groups: groups})
       }).catch((err) => {
           if(err == "Resource not found"){
             rsp.render('groups',{username: req.user.username, title : "All groups", groups: []})
@@ -107,8 +107,9 @@ module.exports = function (services) {
       //Adicionar um jogo a um grupo
       const gameId = req.params.gameId
       const groupId = req.params.groupId
+      const user = req.user.username
 
-      services.addGameToGroup(groupId, gameId).then(() => {
+      services.addGameToGroup(user ,groupId, gameId).then(() => {
           sendGameChangeSuccess(req, rsp, gameId, groupId, "added")}
       ).catch(err => {
           handleError(req, rsp, err)
@@ -119,8 +120,9 @@ module.exports = function (services) {
       //Remover um jogo de um grupo
       const gameId = req.params.gameId
       const groupId = req.params.groupId
+      const user = req.user.username
 
-      services.removeGameFromGroup(groupId,gameId).then(() => {
+      services.removeGameFromGroup(user ,groupId,gameId).then(() => {
           sendGameChangeSuccess(req, rsp, gameId, groupId, "deleted")}
       ).catch(err => {
           handleError(req, rsp, err)
@@ -132,8 +134,9 @@ module.exports = function (services) {
       const groupId = req.params.groupId
       const min = req.params.min
       const max = req.params.max
+      const user = req.user.username
 
-      services.getGamesFromGroupWithinRange(groupId, min, max).then(games => 
+      services.getGamesFromGroupWithinRange(user,groupId, min, max).then(games => 
           rsp.json(games)
       ).catch(err => handleError(req, rsp, err))
   }

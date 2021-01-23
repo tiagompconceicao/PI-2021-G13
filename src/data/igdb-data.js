@@ -1,7 +1,8 @@
 
+const { Console } = require("console")
 const urllib = require("urllib")
 
-const token = "t19htf57c5iskw9203r5jvm8njhw3j"
+const token = "56d5ub03mbfnjy39hcsm66d2k2s4na"
 const client_ID = "gvziab9htl4uxx6lanjjf6bqbr16kt"
 const baseUrl = "https://api.igdb.com/v4/games/"
 

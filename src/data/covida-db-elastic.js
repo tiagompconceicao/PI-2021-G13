@@ -31,6 +31,7 @@ module.exports = function () {
         verifyIfGameExistsInGroup,
         addGameToGroup,
         removeGameFromGroup,
+        removeGroupFromUser,
         getGamesFromGroupWithinRange
     }
 
@@ -222,7 +223,9 @@ module.exports = function () {
         
         return urllib.request(Uri.GROUP + groupId + "/_source", settings).then(result => {
             //result: {data: buffer, res: response object}
-            if (JSON.parse(result.data).error) throw "Resource not found"
+            if (JSON.parse(result.data).error) {
+                throw "Resource not found"
+            }
             return JSON.parse(result.data)
         }).catch(err => {
             throw err
@@ -288,6 +291,32 @@ module.exports = function () {
         }
 
         return urllib.request(Uri.GROUP + group.id + Uri.UPDATE, settings).then(result => {
+            //result: {data: buffer, res: response object}
+            return JSON.parse(result.data)
+        }).catch(err => {
+            throw err
+        })
+    }
+
+    function removeGroupFromUser(group, user) {
+        //Remover um jogo de um grupo
+
+        const settings = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                "script": {
+                    "inline": "ctx._source.groups.remove(ctx._source.groups.indexOf(params.group))",
+                    "params": {
+                        "group": group
+                    }
+                }
+            })
+        }
+
+        return urllib.request(Uri.USER + user + Uri.UPDATE, settings).then(result => {
             //result: {data: buffer, res: response object}
             return JSON.parse(result.data)
         }).catch(err => {

@@ -2,7 +2,9 @@
   <input class="form-control mb-2" type="text" id="gameName" name="gameName" placeholder="Search">
   <!-- Input to url -->
   <!-- Misses link to get request-->
-  <button class="btn btn-secondary" id="searchGameButton">Search</button>
+  <button onclick=searchGames() class="btn btn-secondary" id="searchGameButton">Search</button>
+
+  <p id="demo">hehe</p>
 
 
 <div class="album py-5 bg-light">
@@ -11,16 +13,15 @@
            {{#each games}}
             <div class="col-md-4">
               <div class="card mb-4 box-shadow">
-                <img class="card-img-top" src='{{image_url}}' alt="game image cap">
                 <div class="card-body">
-                  <p class="card-text">{{name}}</p>
-                  <p class="card-text">{{description}}</p>
+                  <p class="card-text">Name: {{name}}</p>
+                  <p class="card-text">Rating: {{total_rating}}</p>
+                  <p class="card-text">Summary: {{summary}}</p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
                       <!-- PUT method here to add group to group-->  
                       <button class="addToGroup btn btn-sm btn-outline-secondary" id='{{id}}'>Add To Group</button>
                     </div>
-                    <small class="text-muted">Max Playtime : {{max_playtime}}</small>
                   </div>
                 </div>
               </div>
@@ -30,5 +31,7 @@
           </div>
         </div>
 </div>
+
+<script src="/js/searchGames.js"></script>
 
 

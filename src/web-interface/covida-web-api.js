@@ -13,7 +13,7 @@ module.exports = function(services){
     router.post("/groups", createGroup)
     router.get("/groups", getAllGroups)
     router.get("/groups/:groupId", getGroupDetails)
-    router.put("/groups/:id/games", addGameToGroup)
+    router.put("/groups/:groupId/games/:gameId", addGameToGroup)
     router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup)
     router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  
 
@@ -94,7 +94,7 @@ module.exports = function(services){
         const gameId = req.params.gameId
         const groupId = req.params.groupId
 
-        services.addGameToGroup(groupId, gameId).then(() => {
+        services.addGameToGroup(req.user.username,groupId, gameId).then(() => {
             sendGameChangeSuccess(req, rsp, gameId, groupId, "added")}
         ).catch(err => {
             handleError(req, rsp, err)
