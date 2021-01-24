@@ -1,17 +1,16 @@
-/*window.onload = function() {
-    const editGroup = document.getElementById("editGroupButton")
-
-    editGroup.onsubmit = function(){
-        //make put 
-    }
-
-
-}*/
 function editGroup(id){
     const name = document.getElementById("groupName")
     const description = document.getElementById("groupDescription")
+    
+    const body = {name : name.value, description: description.value}
 
-    fetch(`/covida/site/groups/${id}`, { method: 'UPDATE' })
+    fetch(`/covida/site/groups/${id}`, { 
+        method: 'PUT',
+        headers: {'Accept': 'application/json','Content-Type': 'application/json'}, 
+        body: JSON.stringify(body) 
+    }).then(result => {
+        
+    })
 }
 
 function filterGames(id){
@@ -28,7 +27,16 @@ function filterGames(id){
     }
 
     fetch(`/covida/site/groups/${id}/${min.value}/${max.value}`).then(games => {
-        render("specificGroup",games)
+        console.log(games)
+
+    })
+}
+
+function removeGameFromGroup(item, groupId, gameId){
+   // const groupId = "{{group}}" //document.getElementById("group")
+    console.log(groupId)
+    fetch(`/covida/site/groups/${groupId}/games/${gameId}`, {method: 'DELETE'}).then(result => {
+        item.remove()
     })
 }
 

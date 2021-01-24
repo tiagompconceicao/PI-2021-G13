@@ -47,13 +47,15 @@ module.exports = function (data, db) {
 
     function editGroup(username, newGroup) {
         //Editar grupo, alterando o seu nome e descrição
-        if (!newGroup.description || !newGroup.name) {
+        if (!username || !newGroup.description || !newGroup.name || !newGroup.id) {
             throw 'Missing arguments'
         }
 
         return checkIfGroupBelongsToUser(username, newGroup.id).then(result => {
             return db.getGroupDetails(newGroup.id).then(group => {
-                return db.editGroup(newGroup)
+                group.name = newGroup.name
+                group.description = newGroup. description
+                return db.editGroup(group)
             }).catch(err => {
                 throw err
             })
@@ -170,7 +172,7 @@ module.exports = function (data, db) {
     function getGamesFromGroupWithinRange(username, groupId, min, max) {
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
 
-        if (min > max || min <= 0 || max >= 100) {
+        if (min > max || min < 0 || max > 100) {
             throw 'Bad input'
         }
 
@@ -178,11 +180,9 @@ module.exports = function (data, db) {
             return db.getGroupDetails(groupId).then(group => {
                 return db.getGamesFromGroupWithinRange(group, min, max)
             }).catch(err => {
-                console.log("Catch 2")
                 throw err
             })
         }).catch(err => {
-            console.log("catch 1")
             throw err
         })
         
@@ -224,8 +224,7 @@ module.exports = function (data, db) {
         return db.getUser(username).then(user => {
             if (user.groups.find((id) => id == groupId)) {
                 return true
-            }
-            console.log("Iisto ta def")
+            }   
             throw "Resource not found"
         })
     }

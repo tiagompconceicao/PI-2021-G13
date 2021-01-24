@@ -1,18 +1,12 @@
 
-{{#with group}}
+{{#with group as |group|}}
   <h3> Group Information</h3>
-  <!--<input class="form-control mb-2" type="text" id="groupName" value={{name}}>
-  <input class="form-control mb-2" type="text" id="groupDescription" value={{description}}>
-  <button class="btn btn-success" id="editGroupButton">Save Changes</button>
-  -->
 
-  <!-- PUT method here to edit group, actually doing a GET--> 
-  <!-- <form method="PUT" action="/groups/{{id}}"> -->
     <div class="card mb-4 box-shadow">
           <div class="card-body">
             <label>Name</label> <input class="form-control mb-2" type="text" id="groupName" placeholder = {{name}}>
             <label>Description</label> <input class="form-control mb-2" type="text" id="groupDescription" placeholder = {{description}}>
-            <button onclick=editGroup({{id}}) class="btn btn-success" id="editGroupButton">Save Changes</button>
+            <button onclick=editGroup({{group.id}}) class="btn btn-success" id="editGroupButton"> Save Changes</button>
         </div>
     </div>
   <!-- </form> -->
@@ -29,7 +23,7 @@
   <div class="album py-5 bg-light">
         <div class="container">
           <div class="row">
-           {{#each games}}
+           {{#each games as |games|}}
             <div class="col-md-4">
               <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -38,7 +32,7 @@
                   <p class="card-text">Summary: {{summary}}</p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                      <button class="deleteGameOfGroup btn btn-sm btn-outline-secondary" id='{{id}}'>Remove</button>
+                      <button onclick=removeGameFromGroup({{games}},{{../id}},{{id}}) class="deleteGameOfGroup btn btn-sm btn-outline-danger" id='{{id}}'>Remove</button>
                     </div>
                   </div>
                 </div>

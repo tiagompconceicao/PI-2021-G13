@@ -9,15 +9,15 @@ module.exports = function (services) {
 
 
   router.get("/groups/:groupId", getGroupDetails) //done
-  router.delete("/groups/:groupId", deleteGroup) //done
-  router.put("/groups/:groupId", editGroup) //TODO
+  router.delete("/groups/:groupId", deleteGroup) //done (does not auto refresh the page)
+  router.put("/groups/:groupId", editGroup) //done (does not auto refresh the page)
   router.post("/groups", createGroup) //done
   router.get("/groups", getAllUserGroups)  //done
-  router.get("/games/:gameName", getGameByName) //input to url cannot add results to html
+  router.get("/games/:gameName", getGameByName)  //works but cannot add results to html
   router.put("/groups/:id/games/:gameId", addGameToGroup)
   router.get("/groups/:id/games", getGamesToGroup) //done
-  router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup) //TODO
-  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  //input to url cannot add results to html
+  router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup) //done (does not auto refresh the page)
+  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  //works but cannot add results to html
 
   return router
 
@@ -53,8 +53,11 @@ module.exports = function (services) {
   function editGroup(req, rsp){
       //Editar grupo, alterando o seu nome e descrição
       const group = { id : req.params.groupId, name : req.body.name, description: req.body.description }
+      console.log(group)
+      console.log(req.body)
+      const user = req.user.username
 
-      services.editGroup(group).then((result) => {
+      services.editGroup(user, group).then((result) => {
           sendGroupChangeSuccess(req, rsp, result._id, result.result)
       }
       ).catch(err => 
@@ -95,9 +98,10 @@ module.exports = function (services) {
       const groupId = req.params.groupId
       const user = req.user.username
       
-      services.getGroupDetails(user, groupId).then(group => 
+      services.getGroupDetails(user, groupId).then(group => {
+          group.games.map(game => game.total_rating = game.total_rating.toFixed(0))                   
           rsp.render('specificGroup',{ group: group })
-      ).catch(err => {
+      }).catch(err => {
           handleError(req, rsp, err)
       }) 
 
@@ -136,9 +140,13 @@ module.exports = function (services) {
       const max = req.params.max
       const user = req.user.username
 
-      services.getGamesFromGroupWithinRange(user,groupId, min, max).then(games => 
-          rsp.json(games)
-      ).catch(err => handleError(req, rsp, err))
+      services.getGamesFromGroupWithinRange(user,groupId, min, max).then(games => {
+          services.getGroupDetails(user, groupId).then(group => {
+            games.map(game => game.total_rating = game.total_rating.toFixed(0))          
+            group.games= games
+            rsp.render('specificGroup',{ group: group })
+          })
+      }).catch(err => handleError(req, rsp, err))
   }
 
   async function handleError(req, rsp, err){
