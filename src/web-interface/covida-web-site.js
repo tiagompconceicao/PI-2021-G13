@@ -9,15 +9,15 @@ module.exports = function (services) {
 
 
   router.get("/groups/:groupId", getGroupDetails) //done
-  router.delete("/groups/:groupId", deleteGroup)
-  router.put("/groups/:groupId", editGroup)
+  router.delete("/groups/:groupId", deleteGroup) //done
+  router.put("/groups/:groupId", editGroup) //TODO
   router.post("/groups", createGroup) //done
   router.get("/groups", getAllUserGroups)  //done
-  router.get("/games/:gameName", getGameByName) //input to url
+  router.get("/games/:gameName", getGameByName) //input to url cannot add results to html
   router.put("/groups/:id/games/:gameId", addGameToGroup)
   router.get("/groups/:id/games", getGamesToGroup) //done
-  router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup)
-  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  //input to url
+  router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup) //TODO
+  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  //input to url cannot add results to html
 
   return router
 
