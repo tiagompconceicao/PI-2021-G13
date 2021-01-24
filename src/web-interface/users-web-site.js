@@ -12,7 +12,7 @@ module.exports = function (services) {
   router.post('/login', validateLogin)
   router.get("/signUp", signUpGet)
   router.post("/signUp", createUser)
-  router.put('/logout', logout)  
+  router.post('/logout', logout)  
   router.put("/users/:usename", editUser)
 
   return router
@@ -27,7 +27,7 @@ module.exports = function (services) {
 
   function createUser(req, rsp) {
     services.createUser(req.body.username, req.body.password, req.body.retypedPassword).then(value => {
-        req.login({ user: value._id }, (err) => rsp.redirect('/covida/site/groups'))
+        req.login({ username: value._id }, (err) => rsp.redirect('/covida/site/groups'))
       }).catch(error => {
         rsp.render('signUp', {warning: error, username: req.body.username})
       })
@@ -61,7 +61,7 @@ module.exports = function (services) {
 
   function logout(req, rsp) {
     req.logout()
-    rsp.redirect('/home')
+    rsp.redirect('/covida/home')
   }
 
   async function handleError(req, rsp, err){

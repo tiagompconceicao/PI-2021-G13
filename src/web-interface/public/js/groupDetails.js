@@ -9,7 +9,7 @@ function editGroup(id){
         headers: {'Accept': 'application/json','Content-Type': 'application/json'}, 
         body: JSON.stringify(body) 
     }).then(result => {
-        
+        window.location.replace(result.url)
     })
 }
 
@@ -26,17 +26,14 @@ function filterGames(id){
         max.value = aux
     }
 
-    fetch(`/covida/site/groups/${id}/${min.value}/${max.value}`).then(games => {
-        console.log(games)
-
+    fetch(`/covida/site/groups/${id}/${min.value}/${max.value}`).then(res => {
+        window.location.replace(res.url)
     })
 }
 
-function removeGameFromGroup(item, groupId, gameId){
-   // const groupId = "{{group}}" //document.getElementById("group")
-    console.log(groupId)
-    fetch(`/covida/site/groups/${groupId}/games/${gameId}`, {method: 'DELETE'}).then(result => {
-        item.remove()
+function removeGameFromGroup(groupId, gameId){
+    fetch(`/covida/site/groups/${groupId}/games/${gameId}`, {method: 'DELETE'}).then(res => {
+        window.location.replace(res.url)
     })
 }
 

@@ -6,6 +6,16 @@ function searchGames(){
     }
 
     fetch(`/covida/site/games/${gameName.value}`).then(res => {
-        document.write(res.text)
+        res.text().then(text => {
+            document.body.innerHTML = ""
+            document.write(text)
+        })
+    })
+}
+
+function addGameToGroup(gameId){
+    const url = document.baseURI
+    fetch(`${url}/${gameId}`, { method: 'PUT'}).then(res => {
+        window.location.replace(res.url)
     })
 }

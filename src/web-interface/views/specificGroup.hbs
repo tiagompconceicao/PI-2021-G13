@@ -4,8 +4,10 @@
 
     <div class="card mb-4 box-shadow">
           <div class="card-body">
-            <label>Name</label> <input class="form-control mb-2" type="text" id="groupName" placeholder = {{name}}>
-            <label>Description</label> <input class="form-control mb-2" type="text" id="groupDescription" placeholder = {{description}}>
+            <p class="card-text">Name: {{name}}</p>
+            <input class="form-control mb-2" type="text" id="groupName" placeholder = "Change name">
+            <p class="card-text">Description: {{description}}</p>
+            <input class="form-control mb-2" type="text" id="groupDescription" placeholder = "Change description">
             <button onclick=editGroup({{group.id}}) class="btn btn-success" id="editGroupButton"> Save Changes</button>
         </div>
     </div>
@@ -32,7 +34,7 @@
                   <p class="card-text">Summary: {{summary}}</p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                      <button onclick=removeGameFromGroup({{games}},{{../id}},{{id}}) class="deleteGameOfGroup btn btn-sm btn-outline-danger" id='{{id}}'>Remove</button>
+                      <button onclick=removeGameFromGroup({{../id}},{{id}}) class="deleteGameOfGroup btn btn-sm btn-outline-danger" id='{{id}}'>Remove</button>
                     </div>
                   </div>
                 </div>

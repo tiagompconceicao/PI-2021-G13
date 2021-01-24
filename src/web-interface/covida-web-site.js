@@ -9,15 +9,15 @@ module.exports = function (services) {
 
 
   router.get("/groups/:groupId", getGroupDetails) //done
-  router.delete("/groups/:groupId", deleteGroup) //done (does not auto refresh the page)
-  router.put("/groups/:groupId", editGroup) //done (does not auto refresh the page)
+  router.delete("/groups/:groupId", deleteGroup) //done 
+  router.put("/groups/:groupId", editGroup) //done
   router.post("/groups", createGroup) //done
   router.get("/groups", getAllUserGroups)  //done
-  router.get("/games/:gameName", getGameByName)  //works but cannot add results to html
-  router.put("/groups/:id/games/:gameId", addGameToGroup)
-  router.get("/groups/:id/games", getGamesToGroup) //done
-  router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup) //done (does not auto refresh the page)
-  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  //works but cannot add results to html
+  router.get("/games/:gameName", getGameByName)  //done
+  router.put("/groups/:groupId/games/:gameId", addGameToGroup) //done
+  router.get("/groups/:groupId/games", getGamesToGroup) //done
+  router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup) //done
+  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  //done
 
   return router
 
@@ -56,9 +56,8 @@ module.exports = function (services) {
       console.log(group)
       console.log(req.body)
       const user = req.user.username
-
       services.editGroup(user, group).then((result) => {
-          sendGroupChangeSuccess(req, rsp, result._id, result.result)
+        rsp.redirect(303,`/covida/site/groups/${group.id}`)
       }
       ).catch(err => 
           handleError(req, rsp, err)
@@ -72,15 +71,15 @@ module.exports = function (services) {
       console.log("chegou ao delete")
 
       services.deleteGroup(groupId,user).then((result) => {
-          sendGroupChangeSuccess(req, rsp, result._id, result.result)}
-      ).catch(err => 
+          rsp.redirect(303, '/covida/site/groups')
+      }).catch(err => 
           handleError(req, rsp, err)
       )
   }
 
   function getAllUserGroups(req,rsp){
       //Listar todos os grupos
-
+        console.log(req.user.username)
       services.getAllUserGroups(req.user.username).then(groups => {
           rsp.render('groups',{username: req.user.username, groups: groups})
       }).catch((err) => {
@@ -98,8 +97,7 @@ module.exports = function (services) {
       const groupId = req.params.groupId
       const user = req.user.username
       
-      services.getGroupDetails(user, groupId).then(group => {
-          group.games.map(game => game.total_rating = game.total_rating.toFixed(0))                   
+      services.getGroupDetails(user, groupId).then(group => {                 
           rsp.render('specificGroup',{ group: group })
       }).catch(err => {
           handleError(req, rsp, err)
@@ -113,9 +111,13 @@ module.exports = function (services) {
       const groupId = req.params.groupId
       const user = req.user.username
 
+      console.log(gameId)
+      console.log(groupId)
+      console.log(user)
+
       services.addGameToGroup(user ,groupId, gameId).then(() => {
-          sendGameChangeSuccess(req, rsp, gameId, groupId, "added")}
-      ).catch(err => {
+          rsp.redirect(303,`/covida/site/groups/${groupId}`)
+      }).catch(err => {
           handleError(req, rsp, err)
       })
   }
@@ -127,8 +129,8 @@ module.exports = function (services) {
       const user = req.user.username
 
       services.removeGameFromGroup(user ,groupId,gameId).then(() => {
-          sendGameChangeSuccess(req, rsp, gameId, groupId, "deleted")}
-      ).catch(err => {
+        rsp.redirect(303, `/covida/site/groups/${groupId}`)
+      }).catch(err => {
           handleError(req, rsp, err)
       })
   }

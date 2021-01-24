@@ -1,5 +1,8 @@
 <div class="row">
-  Username: {{username}} <a href="/users/logout"> Logout</a>
+  Username: {{username}} 
+  <form method="POST" action="/covida/users/logout"> 
+  <button type="submit"> Logout </button>
+</form>
 </div>
 
 <form method="POST" action="/covida/site/groups" username='{{username}}'>

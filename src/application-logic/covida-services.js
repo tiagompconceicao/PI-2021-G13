@@ -26,7 +26,12 @@ module.exports = function (data, db) {
 
     function getGameByName(name) {
         //Pesquisar jogos pelo nome
-        return data.getGameByName(name)
+        return data.getGameByName(name).then(games => {
+            games.map(game => {
+                if (game.total_rating)  game.total_rating = game.total_rating.toFixed(0)
+            })
+            return games  
+        })
     }
 
 
@@ -115,7 +120,10 @@ module.exports = function (data, db) {
             throw 'Missing arguments'
         }
         return checkIfGroupBelongsToUser(username, groupId).then(result => {
-            return db.getGroupDetails(groupId)
+            return db.getGroupDetails(groupId).then(group => {
+                group.games.map(game => game.total_rating = game.total_rating.toFixed(0))
+                return group  
+            })
         }).catch(err => {
             throw err
         })
@@ -123,7 +131,7 @@ module.exports = function (data, db) {
 
     function addGameToGroup(username, groupId, gameId) {
         //Adicionar um jogo a um grupo
-        if (!groupId || !gameId) {
+        if (!username || !groupId || !gameId) {
             throw 'Missing arguments'
         }
 
