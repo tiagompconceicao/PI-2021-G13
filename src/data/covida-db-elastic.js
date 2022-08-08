@@ -1,6 +1,5 @@
 /** Nossa base de dados, trata de tudo o que for preciso guardar na base de dados */
 
-const { Console } = require("console")
 const urllib = require("urllib")
 
 const baseUrl = "http://localhost:9200/"
@@ -68,8 +67,6 @@ module.exports = function () {
             throw err
         })
     }
-
-    //ver aqui comparar com o deles
 
     function editUser(newUser) {
         //Editar User, alterando o seu nome e/ou descrição
@@ -173,7 +170,6 @@ module.exports = function () {
 
     function getAllGroups() {
         //Listar todos os grupos
-
         const settings = {
             method: "GET",
             headers: {
@@ -189,7 +185,6 @@ module.exports = function () {
         }).catch(err => {
             throw err
         })
-
     }
 
     function getAllUsers() {

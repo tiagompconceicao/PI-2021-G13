@@ -1,5 +1,5 @@
 
-const { Console } = require("console")
+//const { Console } = require("console")
 const urllib = require("urllib")
 
 const token = "56d5ub03mbfnjy39hcsm66d2k2s4na"

@@ -6,7 +6,6 @@ const morgan = require('morgan')
 const cookieParser = require('cookie-parser') 
 const passport = require('passport') 
 const expressSession = require('express-session')
-const sitemap = require('express-sitemap-html')
 
 const igdbDb = require('./data/igdb-data')
 const covidaDb = require('./data/covida-db-elastic')()
@@ -42,7 +41,6 @@ app.use('/covida/site', verifyAuthenticated, covidaSiteRouter)
 app.use('/covida/users', covidaUsersRouter)
 app.get('/covida/home', home)
 
-sitemap.swagger('Covida Api', app)
 
 app.listen(PORT, () => {
     console.log(`Covida app listening at http://localhost:${PORT}`)
@@ -65,7 +63,7 @@ function verifyAuthenticated(req, rsp, next) {
   if(req.user) {
     return next()
   }
-  rsp.redirect(302, '/covida/users/login')
+  rsp.redirect(401, '/covida/users/login')
 }
 
 function apiCheck(req, rsp) {

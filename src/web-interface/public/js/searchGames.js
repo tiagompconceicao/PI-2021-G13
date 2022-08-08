@@ -16,6 +16,7 @@ function searchGames(){
 function addGameToGroup(gameId){
     const url = document.baseURI
     fetch(`${url}/${gameId}`, { method: 'PUT'}).then(res => {
+        console.log("!!!!!!!!"+res.url)
         window.location.replace(res.url)
     })
 }

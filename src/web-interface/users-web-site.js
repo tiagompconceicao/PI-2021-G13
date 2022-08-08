@@ -37,11 +37,7 @@ module.exports = function (services) {
   function editUser(req, rsp) {
     let user = {id : req.body.id, username: req.body.username, password: req.body.password, groups: req.body.groups}
     services.editUser(user)
-        //TODO 
-        //processResponse is handled in another way
       .then(value => processResponse(null, value, rsp, 201))
-        //TODO 
-        //processResponse is handled in another way
       .catch(error => handleError(req,rsp,error))
   }
 

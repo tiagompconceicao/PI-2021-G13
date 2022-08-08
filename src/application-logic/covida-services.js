@@ -24,7 +24,7 @@ module.exports = function (data, db) {
         editUser
     }
 
-    function getGameByName(name) {
+    async function getGameByName(name) {
         //Pesquisar jogos pelo nome
         return data.getGameByName(name).then(games => {
             games.map(game => {
@@ -35,7 +35,7 @@ module.exports = function (data, db) {
     }
 
 
-    function createGroup(groupName, description, username) {
+    async function createGroup(groupName, description, username) {
         if (!groupName || !description) {
             throw 'Missing arguments'
         } else if (groupName.trim().length <= 0 || description.trim().length <= 0) {
@@ -50,7 +50,7 @@ module.exports = function (data, db) {
         }
     }
 
-    function editGroup(username, newGroup) {
+    async function editGroup(username, newGroup) {
         //Editar grupo, alterando o seu nome e descrição
         if (!username || !newGroup.description || !newGroup.name || !newGroup.id) {
             throw 'Missing arguments'
@@ -70,51 +70,48 @@ module.exports = function (data, db) {
         
     }
 
-    function deleteGroup(groupId, username) {
+    async function deleteGroup(groupId, username) {
         if (!groupId || !username) {
             throw 'Missing arguments'
         }
 
         return getUser(username).then(user => {
             return checkIfGroupBelongsToUser(username, groupId).then(() => {
-                let newGroups = user.groups.filter(group => group.id != groupId)
+                /*let newGroups = user.groups.filter(group => group.id != groupId)
                     if(newGroups.length != user.groups.length) {
                     user.groups = newGroups
-                    } 
+                    } */
                 return db.deleteGroup(groupId).then(group => {
-                    console.log("deu certo??")
                     return db.removeGroupFromUser(groupId,username)
                 })
             }).catch(err => {
-                console.log("cathc 2")
                 throw err
             })   
         }).catch(err => {
-            console.log("cathc 1")
             throw err
         })
                  
     }
 
-    function getAllGroups() {
+    async function getAllGroups() {
         //Listar todos os grupos
         return db.getAllGroups()
     }
 
-    function getAllUserGroups(username){
+    async function getAllUserGroups(username){
         if(!username){
             throw "Missing arguments"
         }
         return db.getUser(username).then(processGroups).catch(err => {throw err}) 
     }
 
-    function processGroups(user){
+    async function processGroups(user){
 
         return Promise.all(user.groups.map(groupId => db.getGroupDetails(groupId)))
 
     }
 
-    function getGroupDetails(username, groupId) {
+    async function getGroupDetails(username, groupId) {
         //Obter os detalhes de um grupo, com o seu nome, descrição e nomes dos jogos que o constituem
         if (!username || !groupId) {
             throw 'Missing arguments'
@@ -129,7 +126,7 @@ module.exports = function (data, db) {
         })
     }
 
-    function addGameToGroup(username, groupId, gameId) {
+    async function addGameToGroup(username, groupId, gameId) {
         //Adicionar um jogo a um grupo
         if (!username || !groupId || !gameId) {
             throw 'Missing arguments'
@@ -159,7 +156,7 @@ module.exports = function (data, db) {
         
     }
 
-    function removeGameFromGroup(username, groupId, gameId) {
+    async function removeGameFromGroup(username, groupId, gameId) {
         //Remover um jogo de um grupo
         if (!groupId || !gameId) {
             throw 'Missing arguments'
@@ -177,7 +174,7 @@ module.exports = function (data, db) {
         
     }
 
-    function getGamesFromGroupWithinRange(username, groupId, min, max) {
+    async function getGamesFromGroupWithinRange(username, groupId, min, max) {
         //Obter os jogos de um grupo que têm uma votação média (total_rating) entre dois valores 
 
         if (min > max || min < 0 || max > 100) {
@@ -196,13 +193,13 @@ module.exports = function (data, db) {
         
     }
 
-    function getUser(username) {
+    async function getUser(username) {
         if (!username)
             throw "Missing arguments"
         return db.getUser(username)
     }
 
-    function verifyIfUserExists(username){
+    async function verifyIfUserExists(username){
         if (!username)
             throw "Missing arguments"
         return db.getUser(username).then(() => {return true})
@@ -214,7 +211,10 @@ module.exports = function (data, db) {
         })
     }
 
-    function validateLogin(username, password) {
+    async function validateLogin(username, password) {
+        if(!username || !password) {
+            throw 'Please insert username and password'
+        } 
         return getUser(username).then(user => {
             if (user) {
                 if (user.password == password){
@@ -226,9 +226,10 @@ module.exports = function (data, db) {
         }).catch(err => {
             throw err
         })
+        
     }
 
-    function checkIfGroupBelongsToUser(username, groupId) {
+    async function checkIfGroupBelongsToUser(username, groupId) {
         return db.getUser(username).then(user => {
             if (user.groups.find((id) => id == groupId)) {
                 return true
@@ -257,7 +258,7 @@ module.exports = function (data, db) {
         }
     }
 
-    function editUser(newUser) {
+    async function editUser(newUser) {
         //Editar user, possibilitando alterar a sua password e grupos
         if (!newUser.username || !newUser.password || !newUser.groups) {
              throw 'Missing arguments'

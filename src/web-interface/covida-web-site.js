@@ -8,16 +8,16 @@ module.exports = function (services) {
   const router = express.Router()
 
 
-  router.get("/groups/:groupId", getGroupDetails) //done
-  router.delete("/groups/:groupId", deleteGroup) //done 
-  router.put("/groups/:groupId", editGroup) //done
-  router.post("/groups", createGroup) //done
-  router.get("/groups", getAllUserGroups)  //done
-  router.get("/games/:gameName", getGameByName)  //done
-  router.put("/groups/:groupId/games/:gameId", addGameToGroup) //done
-  router.get("/groups/:groupId/games", getGamesToGroup) //done
-  router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup) //done
-  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  //done
+  router.get("/groups/:groupId", getGroupDetails) 
+  router.delete("/groups/:groupId", deleteGroup)  
+  router.put("/groups/:groupId", editGroup) 
+  router.post("/groups", createGroup) 
+  router.get("/groups", getAllUserGroups) 
+  router.get("/games/:gameName", getGameByName) 
+  router.put("/groups/:groupId/games/:gameId", addGameToGroup)
+  router.get("/groups/:groupId/games", getGamesToGroup) 
+  router.delete("/groups/:groupId/games/:gameId", removeGameFromGroup) 
+  router.get(`/groups/:groupId/:min/:max`, getGamesFromGroupWithinRange)  
 
   return router
 
@@ -53,8 +53,6 @@ module.exports = function (services) {
   function editGroup(req, rsp){
       //Editar grupo, alterando o seu nome e descrição
       const group = { id : req.params.groupId, name : req.body.name, description: req.body.description }
-      console.log(group)
-      console.log(req.body)
       const user = req.user.username
       services.editGroup(user, group).then((result) => {
         rsp.redirect(303,`/covida/site/groups/${group.id}`)
@@ -68,7 +66,6 @@ module.exports = function (services) {
       //Remover um grupo
       const groupId = req.params.groupId
       const user = req.user.username
-      console.log("chegou ao delete")
 
       services.deleteGroup(groupId,user).then((result) => {
           rsp.redirect(303, '/covida/site/groups')
@@ -79,7 +76,6 @@ module.exports = function (services) {
 
   function getAllUserGroups(req,rsp){
       //Listar todos os grupos
-        console.log(req.user.username)
       services.getAllUserGroups(req.user.username).then(groups => {
           rsp.render('groups',{username: req.user.username, groups: groups})
       }).catch((err) => {
@@ -110,10 +106,6 @@ module.exports = function (services) {
       const gameId = req.params.gameId
       const groupId = req.params.groupId
       const user = req.user.username
-
-      console.log(gameId)
-      console.log(groupId)
-      console.log(user)
 
       services.addGameToGroup(user ,groupId, gameId).then(() => {
           rsp.redirect(303,`/covida/site/groups/${groupId}`)
@@ -170,7 +162,7 @@ module.exports = function (services) {
               sendBadGateway(req, rsp, "Bad Gateway")
               break
       }
-  }
+   }
 
   function sendBadGateway(req, rsp, msg){
       rsp.status(502).json({
@@ -199,21 +191,5 @@ module.exports = function (services) {
           uri:req.originalUrl
       })
   } 
-
-
-
-  async function sendGroupChangeSuccess(req, rsp, id, changeType, urlSuffix = "") {
-      rsp.json({
-        status : `Group with id ${id} ${changeType}`,
-        uri: req.originalUrl + urlSuffix
-      })
-  }
-
-  async function sendGameChangeSuccess(req, rsp, gameId, groupId, changeType) {
-      rsp.json({
-        status : `Game with id ${gameId} ${changeType} in group with id ${groupId}`,
-        uri: req.originalUrl
-      })
-  }
 
 }
